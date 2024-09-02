@@ -18,6 +18,14 @@ routerAuth.post('/register',
     }),
     handleErrors,
     AuthController.register);
-routerAuth.get('/populate', AuthController.getPopulate);
+routerAuth.post('/login',
+    body('email').isEmail(),
+    body('password').isString().isLength({min:6}),
+    handleErrors,
+    AuthController.login);
+
+
+    routerAuth.get('/populate',
+        AuthController.getPopulate);
 
 export default routerAuth;
