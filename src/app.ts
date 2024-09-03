@@ -4,6 +4,7 @@ import cors from 'cors'
 import roterAuth from './routes/authRoute';
 import dotenv from 'dotenv';
 import {conectDB} from './database';
+import userRoute from './routes/userRoute';
 // initializations
     const app = Express();
     dotenv.config();
@@ -27,5 +28,6 @@ import {conectDB} from './database';
     });
 //auth
     app.use("/api/auth",roterAuth)
+    app.use("/api/user",userRoute)
 
     export default app;

@@ -36,7 +36,7 @@ class AuthContoller{
             }
 
             const userExist = await User.findOne({ email }).populate('studentId');
-
+            
             // Verificar que userExist sea de tipo ObjectId
             if (!userExist || !mongoose.isValidObjectId(userExist._id)) {
                 return res.status(400).json({ message: 'El usuario no existe' });
