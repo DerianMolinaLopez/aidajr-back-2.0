@@ -9,22 +9,37 @@ class AuthContoller{
         const users = await User.find();
         res.send(users);
     }
-    static async register(req:Request,res:Response){
-        const {name,email} = req.body;
-        const userExist = await User.findOne({email});//buscamos si el usuario ya existe
-        if(userExist) return res.status(400).json({message: 'El usuario ya existe'});//si existe retornamos un mensaje de error
+    static async register(req: Request, res: Response) {
+        const { name, email, role } = req.body;
 
+        try {
+            // Buscamos si el usuario ya existe
+            const userExist = await User.findOne({ email });
+            if (userExist) {
+                return res.status(400).json({ message: 'El usuario ya existe' });
+            }
 
-        let password = req.body.password;
-        const type_user = "alumno";//-->por defecto es de alumno, las cuentas de profesores las asigna la "administracion"
-        password = await bcrypt.hash(password,10);//ocultamos la contraseña con una complejidad algoritmica de 10
-        const user = new User({name,email,password,type_user});
-        console.log(user._id)
-        const student = await Student.create({user_Id:user._id});//creamos un estudiante con el id del usuario
-        user.studentId = student._id as any;//asignamos el id del estudiante al usuario
-        await user.save();
-        res.send("Cuenta creada con exito")
-        
+            // Ocultamos la contraseña con una complejidad algoritmica de 10
+            let password = req.body.password;
+            const type_user = role; // Por defecto es de alumno, las cuentas de profesores las asigna la "administracion"
+            password = await bcrypt.hash(password, 10);
+
+            // Creamos un nuevo usuario
+            const user = new User({ name, email, password, type_user });
+            console.log(user._id);
+
+            // Creamos un estudiante con el id del usuario
+            const student = await Student.create({ user_Id: user._id });
+            user.studentId = student._id as any; // Asignamos el id del estudiante al usuario
+
+            // Guardamos el usuario
+            await user.save();
+
+            res.send("Cuenta creada con éxito");
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({ message: 'Error en el servidor' });
+        }
     }
     static async login(req: Request, res: Response) {
         try {
@@ -63,7 +78,7 @@ class AuthContoller{
                 studentId: student?._id
             });
 
-            res.json({ message: 'Autenticación exitosa', token });
+            res.json({ message: 'Autenticación exitosa', token, tipoUsuario: userExist.type_user });
 
         } catch (e) {
             console.log(e);

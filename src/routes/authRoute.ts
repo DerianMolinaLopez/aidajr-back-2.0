@@ -9,6 +9,10 @@ routerAuth.post('/register',
     body('name').isString().isLength({ min: 3 }),
     body('email').isEmail(),
     body('password').isString().isLength({ min: 6 }),
+    body('role').isString()
+                .withMessage('El rol es requerido')
+                .isIn(['instructor', 'estudiante'])
+                .withMessage('El rol debe ser instructor o estudiante'),
     body('repeat_password').isString().isLength({ min: 6 }).custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error('Las contraseñas no coinciden');
