@@ -4,6 +4,7 @@ import cors from 'cors'
 import roterAuth from './routes/authRoute';
 import dotenv from 'dotenv';
 import {conectDB} from './database';
+import routerCourses from './routes/coursesRoute';
 import userRoute from './routes/userRoute';
 // initializations
     const app = Express();
@@ -26,6 +27,10 @@ import userRoute from './routes/userRoute';
     app.get('/', (req, res)=>{
         res.send(`THE API is at http://localhost:${app.get('port')}`);
     });
+
+//crecionales
+  app.use('/api/courses',routerCourses ) 
+    
 //auth
     app.use("/api/auth",roterAuth)
     app.use("/api/user",userRoute)

@@ -2,6 +2,7 @@ import mongoose,{Schema, Document, Types, PopulatedDoc} from 'mongoose';
 export interface StudentInter extends Document{
     user_Id: PopulatedDoc<Types.ObjectId>;
     inscription_date: Date;
+    cursos: PopulatedDoc<Types.ObjectId>[];
 
 }
 const StudentSchema:Schema = new Schema({
@@ -9,6 +10,13 @@ const StudentSchema:Schema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User', // Corregir aquí
     },
+    cursos:{
+        type: [Schema.Types.ObjectId],
+        ref: 'Student-curses',
+        required: false,
+        default: []
+    },
+    
     inscription_date:{
         type: Date,
         default: Date.now()

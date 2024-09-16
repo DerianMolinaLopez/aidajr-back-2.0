@@ -5,6 +5,7 @@ export interface CoursesInter extends Document{
     instructor_Id: Types.ObjectId;
     start_date: Date;
     end_date: Date;
+    alumnosInscritos: Types.ObjectId[];
 }
 const CoursesSchema:Schema = new Schema({
     name:{
@@ -19,15 +20,28 @@ const CoursesSchema:Schema = new Schema({
     },
     instructor_Id:{
         type: Schema.Types.ObjectId,
-        ref: 'Instructor' // Corregir aquí
+        ref: 'Instructor', // Corregir aquí
+        default: null
+    },
+    alumnosInscritos:{
+        type: [Schema.Types.ObjectId],
+        default: [],
+        ref:'Student-curses'
+    },
+    tipoCurso:{
+        type: String,
+        required: true,
+        trim: true
     },
     start_date:{
         type: Date,
         required: true,
+        default: Date.now
     },
     end_date:{
         type: Date,
         required: true,
+        default: Date.now
     }
 });
 const Courses = mongoose.model<CoursesInter>('Courses', CoursesSchema);
