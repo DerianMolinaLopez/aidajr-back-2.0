@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/User";
 import Student from "../models/Student";
 import mongoose from "mongoose";
+import Instructor from "../models/Instructor";
 import bcrypt from 'bcrypt';
 import { createJWTToken } from "../helpers/createJWTToken";
 class AuthContoller{
@@ -9,7 +10,7 @@ class AuthContoller{
         const users = await User.find();
         res.send(users);
     }
-    static async register(req: Request, res: Response) {
+    static async register(req: Request, res: Response) {//*arreglado por medios de tipos de roles
         const { name, email, role } = req.body;
 
         try {
@@ -28,9 +29,14 @@ class AuthContoller{
             const user = new User({ name, email, password, type_user });
             console.log(user._id);
 
-            // Creamos un estudiante con el id del usuario
-            const student = await Student.create({ user_Id: user._id });
-            user.studentId = student._id as any; // Asignamos el id del estudiante al usuario
+            // Creamos un estudiante o instructor según el type_user
+            if (type_user === 'student') {
+                const student = await Student.create({ user_Id: user._id });
+                user.studentId = student._id as any; // Asignamos el id del estudiante al usuario
+            } else if (type_user === 'instructor') {
+                const instructor = await Instructor.create({ user_Id: user._id });
+                user.instructorId = instructor._id as any  // Asignamos el id del instructor al usuario
+            }
 
             // Guardamos el usuario
             await user.save();
@@ -41,6 +47,7 @@ class AuthContoller{
             return res.status(500).json({ message: 'Error en el servidor' });
         }
     }
+    
     static async login(req: Request, res: Response) {
         try {
             const { email, password } = req.body;

@@ -1,10 +1,13 @@
 import mongoose,{Schema, Document, PopulateOption, PopulatedDoc, ObjectId} from 'mongoose';
+import { NextFunction } from 'express';
 import { StudentInter } from './Student';
+import { InstructorInter } from './Instructor';
 export interface UserInter extends Document{
     name: string;
     email: string;
     password: string;
-    studentId: PopulatedDoc<StudentInter & Document>;
+    studentId?: PopulatedDoc<StudentInter & Document>;
+    instructorId?: PopulatedDoc<InstructorInter & Document>;
     type_user: string;
 }
 const UserSchema:Schema = new Schema({
@@ -28,6 +31,11 @@ const UserSchema:Schema = new Schema({
     studentId:{
         type: Schema.Types.ObjectId,
         ref: 'Student',
+        required: false
+    },
+    instructorId:{
+        type: Schema.Types.ObjectId,
+        ref: 'Instructor',
         required: false
     },
     

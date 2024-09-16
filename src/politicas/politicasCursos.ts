@@ -19,3 +19,9 @@ export const updateCoursesReueriments = [
     body('description').isString().notEmpty().withMessage('La descripcion es requerida'),
     body('instructor_Id').isMongoId().withMessage('El instructor debe ser un ID de mongo').optional()
 ]
+export const updateUserRequeriments = [
+    body('name').isString().notEmpty().withMessage('El nombre es requerido'),
+    body('email').isEmail().withMessage('Ese no es un email valido')
+                 .notEmpty().withMessage('El email es requerido'),
+
+]

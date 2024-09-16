@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import {conectDB} from './database';
 import routerCourses from './routes/coursesRoute';
 import userRoute from './routes/userRoute';
+import routerInstructor from './routes/instructorRoute';
 // initializations
     const app = Express();
     dotenv.config();
@@ -30,6 +31,7 @@ import userRoute from './routes/userRoute';
 
 //crecionales
   app.use('/api/courses',routerCourses ) 
+  app.use('/api/instructor', routerInstructor);
     
 //auth
     app.use("/api/auth",roterAuth)
