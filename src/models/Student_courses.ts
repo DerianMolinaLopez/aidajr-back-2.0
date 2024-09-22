@@ -19,7 +19,7 @@ const Student_CoursesSchema:Schema = new Schema({
     },
 
     student:{
-        type: [Schema.Types.ObjectId],
+        type: Schema.Types.ObjectId ,//!solamente es un estudiante,
         ref: 'Student',
         required: true
     },

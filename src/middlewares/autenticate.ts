@@ -17,7 +17,7 @@ export async function autenticate(req: Request, res: Response, next: NextFunctio
         const tokenDecoded = jwt.verify(token!, process.env.SECRET_JWT_KEY!);
         if(typeof tokenDecoded === 'object'){
            // console.log(tokenDecoded)
-            const user = await User.findById(tokenDecoded.id);
+            const user = await User.findById(tokenDecoded.id).select('-password');
             req.user = user as UserInter;
             next()
            

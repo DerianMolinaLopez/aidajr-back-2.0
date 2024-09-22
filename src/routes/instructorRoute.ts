@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import InstructorController from '../controllers/InstructorController';
 import { updateUserRequeriments } from '../politicas/politicasCursos';
+import { autenticate } from '../middlewares/autenticate';
 import { handleErrors } from '../middlewares/handleErrores';
 const routerInstructor = Router();
 
@@ -12,5 +13,8 @@ routerInstructor.put('/instructors/:id',
     handleErrors,
     InstructorController.updateInstructor);
 routerInstructor.delete('/instructors/:id', InstructorController.deleteInstructor);
+routerInstructor.post('/instructors/course',
+    autenticate,
+    InstructorController.createCourse); 
 
 export default routerInstructor;

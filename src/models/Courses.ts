@@ -10,6 +10,8 @@ export interface CoursesInter extends Document {
     end_date: Date;
     course_students: PopulatedDoc<StudentInter & Document>[];
     tipoCurso: string;
+    valoration: number;
+   
 }
 
 const CoursesSchema: Schema = new Schema({
@@ -28,7 +30,7 @@ const CoursesSchema: Schema = new Schema({
         ref: 'Instructor',
         default: null
     },
-    course_students: {
+    course_students: { 
         type: [Schema.Types.ObjectId],
         ref: 'Student-curses',
         default: []
@@ -47,6 +49,11 @@ const CoursesSchema: Schema = new Schema({
         type: Date,
         required: true,
         default: Date.now
+    },
+    valoration:{
+        type: Number,
+        required: true,
+        default: 0
     }
 });
 

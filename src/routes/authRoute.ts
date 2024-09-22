@@ -32,4 +32,7 @@ routerAuth.post('/login',
 routerAuth.get('/populate',
     AuthController.getPopulate);
 
+
+
+
 export default routerAuth;

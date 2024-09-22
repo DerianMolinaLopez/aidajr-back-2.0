@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Instructor from '../models/Instructor';
 import User from '../models/User';
 import { InstructorInter } from '../models/Instructor';
+import Courses from '../models/Courses';
 class InstructorController {
     
 
@@ -83,6 +84,24 @@ class InstructorController {
            
         } catch (error) {
             res.status(500).json({ message: 'Error al eliminar el instructor', error });
+        }
+    }
+    static async createCourse(req: Request, res: Response) {
+        //@ts-ignore
+        const {type_user} = req.user
+        
+        if(type_user !== 'instructor') return res.status(401).json({message: 'No autorizado'})
+
+        
+        try {
+            const curso = new Courses(req.body)
+        //@ts-ignore
+        cruso.instructorId = req.user.instructorId
+        await curso.save()
+          res.json(curso)
+           
+        } catch (error) {
+            res.status(500).json({ message: 'Error al crear el curso', error });
         }
     }
 }

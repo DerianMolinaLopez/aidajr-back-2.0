@@ -32,7 +32,7 @@ const UserSchema:Schema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Student',
         required: false
-    },
+    }, 
     instructorId:{
         type: Schema.Types.ObjectId,
         ref: 'Instructor',

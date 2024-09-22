@@ -30,7 +30,7 @@ class AuthContoller{
             console.log(user._id);
 
             // Creamos un estudiante o instructor según el type_user
-            if (type_user === 'student') {
+            if (type_user === 'estudiante') {
                 const student = await Student.create({ user_Id: user._id });
                 user.studentId = student._id as any; // Asignamos el id del estudiante al usuario
             } else if (type_user === 'instructor') {

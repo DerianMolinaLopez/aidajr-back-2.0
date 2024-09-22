@@ -18,7 +18,7 @@ const StudentSchema:Schema = new Schema({
     },
     
     inscription_date:{
-        type: Date,
+        type: Date, 
         default: Date.now()
     },
 });
