@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Courses from '../models/Courses';
+import Instructor from '../models/Instructor';
 
 class CoursesController {
     // Crear un nuevo curso
@@ -85,6 +86,34 @@ class CoursesController {
             res.status(200).json({ message: 'Curso eliminado' });
         } catch (error) {
             res.status(500).json({ message: 'Error al eliminar el curso', error });
+        }
+    }
+
+    /* 
+    *Asosciar un instructor a un curso
+    */
+    static async asignCourseInstructor(req: Request, res: Response) {
+        try {
+
+            /*
+            1- Buscar el instructor por id
+
+            2- Buscar el curso por id
+
+            3- Asignar el instructor al curso
+
+            4- Guardar el curso
+            */
+            const {id} = req.body;
+            const instructorExist = await Instructor.findById(id);
+            if(!instructorExist) return res.status(400).json({message: 'Instructor no encontrado'});
+            const course = await Courses.findById(req.params.id);
+            if(!course) return res.status(400).json({message: 'Curso no encontrado'});
+            course.instructor_Id = instructorExist.id;
+            await course.save();
+            res.send("Instructor asignado al curso con exito")
+        } catch (error) {
+            res.status(500).json({ message: 'Error al agregar el instructor al curso', error });
         }
     }
 }

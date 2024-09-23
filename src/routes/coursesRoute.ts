@@ -21,5 +21,5 @@ routerCourses.put('/course/:id',
     handleErrors, 
     CoursesController.updateCourse);
 routerCourses.delete('/courses/:id', CoursesController.deleteCourse);
-
+routerCourses.post("/courses/:id/instructor", CoursesController.asignCourseInstructor);
 export default routerCourses;

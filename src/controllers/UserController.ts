@@ -72,5 +72,67 @@ export class Usercontroller{
         res.send("Error en el servidor")
       }
     }
+    //obtener los cursos por tipos
+    /**
+     * modificacion
+     * !solo mandaremos los cursos por tipo y que el usuario no lo tenga en su lista de cursos
+     */
+    static async getCoursesByType(req:Request,res:Response){
+      try{
+        const {tipoCurso} = req.params
+        console.log(req.user)
+        const student = await Student.findById(req.user?.studentId)
+       
+        console.log(student)
+        if(tipoCurso==='word'|| tipoCurso==='excel'||tipoCurso==='powerpoint'){
+          const cursos = await Courses.find({ tipoCurso }).select("-course_students")
+          .populate({
+              path: 'instructor_Id',
+              select:"-courses -__v ",
+              populate: {
+                  path: 'user_Id',
+                  select:"name"
+              },
+              options:{limit:4}
+          });
+           return res.send({cursos})
+        }
+        
+      res.send("Tipo de curso no valido")
+      }catch(err){
+        console.log(err)
+        res.send("Error en el servidor")
+      }
+    }
 
 }
+/*
+static async getCoursesByType(req:Request,res:Response){
+      try{
+        const {tipoCurso} = req.params
+        console.log(req.user)
+        const student = await Student.findById(req.user?.studentId)
+        console.log(student)
+
+
+
+        if(tipoCurso==='word'|| tipoCurso==='excel'||tipoCurso==='powerpoint'){
+          const cursos = await Courses.find({ tipoCurso }).select("-course_students")
+          .populate({
+              path: 'instructor_Id',
+              select:"-courses -__v ",
+              populate: {
+                  path: 'user_Id',
+                  select:"name"
+              }
+          });
+           return res.send({cursos})
+        }
+        
+      res.send("Tipo de curso no valido")
+      }catch(err){
+        console.log(err)
+        res.send("Error en el servidor")
+      }
+    }
+*/
