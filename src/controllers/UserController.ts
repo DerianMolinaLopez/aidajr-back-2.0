@@ -18,7 +18,7 @@ export class Usercontroller{
         let cursos:CourseShort[] = []
     
         if(!studentExist)return res.status(400).json({message:"Estudiante no encontrado"})
-        if (studentExist.cursos.length === 0) return res.status(400).json({message:"No hay cursos"})
+        if (studentExist.cursos.length === 0) return res.status(200).json({message:"No hay cursos", cursos:[]})
             //en caso de haber cursos, vamos a iterar sobre el array trallendo el documento de detalle yparte del documento de curso
         for(const curso of studentExist.cursos){
             //curso sera el id que viene del arreglo de cursos de estudiante
@@ -95,6 +95,8 @@ export class Usercontroller{
               },
               options:{limit:4}
           });
+          console.log("-------------------")
+          console.log(cursos)
            return res.send({cursos})
         }
         

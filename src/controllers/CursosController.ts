@@ -103,6 +103,9 @@ class CoursesController {
             3- Asignar el instructor al curso
 
             4- Guardar el curso
+
+            en el params viene el id del curso
+            en el body viene el id del instructor
             */
             const {id} = req.body;
             const instructorExist = await Instructor.findById(id);
