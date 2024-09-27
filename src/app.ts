@@ -7,6 +7,7 @@ import {conectDB} from './database';
 import routerCourses from './routes/coursesRoute';
 import userRoute from './routes/userRoute';
 import routerInstructor from './routes/instructorRoute';
+import routerSection from './routes/sectionRoute';
 // initializations
     const app = Express();
     dotenv.config();
@@ -28,7 +29,8 @@ import routerInstructor from './routes/instructorRoute';
     app.get('/', (req, res)=>{
         res.send(`THE API is at http://localhost:${app.get('port')}`);
     });
-
+//section of courses
+    app.use('/api/sections',routerSection)
 //crecionales
   app.use('/api/courses',routerCourses ) 
   app.use('/api/instructor', routerInstructor);

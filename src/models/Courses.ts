@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document, Types, PopulatedDoc } from 'mongoose';
+import mongoose, { Schema, Document, Types, PopulatedDoc,ObjectId } from 'mongoose';
 import { InstructorInter } from './Instructor';
 import { StudentInter } from './Student';
+import Section, { SectionsInter } from './Sections';
 
 export interface CoursesInter extends Document {
     name: string;
@@ -11,6 +12,7 @@ export interface CoursesInter extends Document {
     course_students: PopulatedDoc<StudentInter & Document>[];
     tipoCurso: string;
     valoration: number;
+    sections : ObjectId[];
    
 }
 
@@ -54,6 +56,11 @@ const CoursesSchema: Schema = new Schema({
         type: Number,
         required: true,
         default: 0
+    },
+    sections:{
+        type: [Schema.Types.ObjectId],
+        ref: 'Sections',
+        default: []
     }
 });
 

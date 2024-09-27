@@ -52,7 +52,13 @@ class CoursesController {
      // Obtener un curso por ID
     static async getCourseById(req: Request, res: Response) {
         try {
-            const course = await Courses.findById(req.params.id);
+            const course = await Courses.findById(req.params.id)
+            .populate({path: 'instructor_Id',
+                populate:{
+                    path:"user_Id",
+                    select:"name "
+                }
+            });
             if (!course) {
                 return res.status(404).json({ message: 'Curso no encontrado' });
             }
