@@ -3,6 +3,7 @@ import { autenticate } from '../middlewares/autenticate';
 import { Usercontroller } from '../controllers/UserController';
 import { body } from 'express-validator';
 import { handleErrors } from '../middlewares/handleErrores';
+
 import User from '../models/User';
 const userRoute = Route();
 userRoute.get("/student",autenticate,Usercontroller.getStudent)
