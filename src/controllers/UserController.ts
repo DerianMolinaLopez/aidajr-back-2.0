@@ -4,6 +4,8 @@ import Student_Courses from "../models/Student_courses";
 import { CourseShort } from "../type/type";
 import User from "../models/User";
 import Courses, { CoursesInter } from "../models/Courses";
+import { formatearCursos } from "../helpers/formatearCursos";
+import { populate } from "dotenv";
 export class Usercontroller{
     static async getStudent(req:Request,res:Response){
     res.json({estudiante:req.user})
@@ -44,6 +46,47 @@ export class Usercontroller{
         res.send("Error en el servidor")
       }
     }
+
+    static async getCoursesByStudentDetail(req: Request, res: Response): Promise<void> {
+      try {
+          // 1- id del usuario para extraer sus detalles de cursos
+          const user = await Student.findById(req.user?.studentId)
+              .populate({
+                  path: "cursos",
+                  select: "course process",
+                  populate: {
+                      path: "course",
+                      select: "name description instructor_Id valoration tipoCurso",
+                      populate: {
+                          path: "instructor_Id",
+                          select: "user_Id",
+                          populate: { path: "user_Id", select: "name" }
+                      }
+                  }
+              });
+
+          // 2- de cada detalle de curso, lo procesamos para traer el curso y el instructor
+          const cursos = user?.cursos;
+          if (cursos) {
+              const formattedCourses = cursos.map(curso => {
+                  const formateado = formatearCursos(curso )
+                  console.log(formateado)
+                 return formateado
+              });
+
+              // 3- enviar respuesta formateada a un nivel
+              res.status(200).json({cursos:formattedCourses});
+          } else {
+              res.status(404).json({ message: 'No se encontraron cursos para el usuario' });
+          }
+      } catch (err) {
+          console.log(err);
+          res.status(500).json({ message: 'Error en el servidor' });
+      }
+  }
+
+
+
     static async addCourseStudent(req:Request,res:Response){
       try{
       //1- el id del alumno esta en el autenticado

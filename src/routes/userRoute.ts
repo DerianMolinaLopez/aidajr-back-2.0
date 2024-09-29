@@ -8,6 +8,7 @@ import User from '../models/User';
 const userRoute = Route();
 userRoute.get("/student",autenticate,Usercontroller.getStudent)
 userRoute.get("/student/courses",autenticate,Usercontroller.getCoursesByStudent)
+userRoute.get("/student/courses/detail",autenticate,Usercontroller.getCoursesByStudentDetail)
 userRoute.post('/student/agregar-curso',
     body('id_course').notEmpty().withMessage('El id del curso es requerido'),
     handleErrors,
