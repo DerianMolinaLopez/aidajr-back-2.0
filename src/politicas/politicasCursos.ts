@@ -25,3 +25,16 @@ export const updateUserRequeriments = [
                  .notEmpty().withMessage('El email es requerido'),
 
 ]
+export const politicasCursosCompras = [
+ body('curso').isString().notEmpty().withMessage('Es necesairo enviar todos los campos'),
+ body('costo').isString().notEmpty().withMessage('Es necesairo enviar todos los campos'),
+ body('instructor').isString().notEmpty().withMessage('Es necesairo enviar todos los campos'),
+]
+
+export const politicasCursosComprasDetail = [
+    body('id_course').isString().notEmpty().withMessage('Es necesairo enviar todos los campos'),
+    body('password').isString().notEmpty().withMessage('Es necesairo enviar todos los campos'),
+    body('curso').isString().notEmpty().withMessage('Es necesairo enviar todos los campos'),
+    body('curso').isString().notEmpty().withMessage('Es necesairo enviar todos los campos'),
+    body('instructor').isString().notEmpty().withMessage('Es necesairo enviar todos los campos'),
+   ]

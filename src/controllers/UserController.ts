@@ -5,6 +5,8 @@ import { CourseShort } from "../type/type";
 import User from "../models/User";
 import Courses, { CoursesInter } from "../models/Courses";
 import { formatearCursos } from "../helpers/formatearCursos";
+import bcrypt from "bcrypt";
+import EmailAuth, { EnvioConfirmarCurso } from "../email/EmailAuth";
 import { populate } from "dotenv";
 export class Usercontroller{
     static async getStudent(req:Request,res:Response){
@@ -115,6 +117,51 @@ export class Usercontroller{
         res.send("Error en el servidor")
       }
     }
+
+
+    static async agregarAlumnoPago(req:Request,res:Response){
+      try{
+      //1- el id del alumno esta en el autenticado
+      //2- el id del curso esta en el body
+      //3- busscar el estudiante
+      //4- buscar el curso
+      //5- crear el detalle del curso
+      //6- agregar el detalle al estudiante
+      //7- guardar el estudiante
+      //8- enviar respuesta
+      const {id_course,password} = req.body
+      const student = req.user?.studentId
+      const userExist = await User.findById(req.user?.id)
+      const studentExist = await Student.findById(student)
+      const courseExist = await Courses.findById(id_course)
+     
+      if(!studentExist)return res.status(400).json({message:"Estudiante no encontrado"})
+      if(!userExist) return res.status(400).json({message:"Usuario no encontrado"})
+       const passwordMatch = await bcrypt.compare(password,userExist?.password)
+      if(!passwordMatch) return res.status(400).json({message:"Contraseña incorrecta"})
+      if(!courseExist)return res.status(400).json({message:"Curso no encontrado"})
+      const studentCourse = await Student_Courses.create({student:studentExist,course:courseExist})
+       courseExist.course_students.push(studentCourse.id)
+        studentExist.cursos.push(studentCourse.id)
+        console.log("enviando el email de factura")
+        EmailAuth.facturaCompra({
+          email: userExist.email,
+          curso: courseExist.name,
+          costo: req.body.costo,
+          intructor: req.body.instructor,
+          user:userExist.name
+        })
+
+        
+      await Promise.all([courseExist.save(),studentExist.save(), studentCourse.save()])
+
+       
+      res.send("Hemos enviado un ticket a tu correo electronico")
+      }catch(err){
+        console.log(err)
+        res.send("Error en el servidor")
+      }
+    }
     //obtener los cursos por tipos
     /**
      * modificacion
@@ -149,35 +196,24 @@ export class Usercontroller{
         res.send("Error en el servidor")
       }
     }
+    
 
 }
-/*
-static async getCoursesByType(req:Request,res:Response){
+ /*   static async confirmTicket(req:Request,res:Response){
       try{
-        const {tipoCurso} = req.params
-        console.log(req.user)
-        const student = await Student.findById(req.user?.studentId)
-        console.log(student)
-
-
-
-        if(tipoCurso==='word'|| tipoCurso==='excel'||tipoCurso==='powerpoint'){
-          const cursos = await Courses.find({ tipoCurso }).select("-course_students")
-          .populate({
-              path: 'instructor_Id',
-              select:"-courses -__v ",
-              populate: {
-                  path: 'user_Id',
-                  select:"name"
-              }
-          });
-           return res.send({cursos})
-        }
-        
-      res.send("Tipo de curso no valido")
+         console.log(req.user)
+        //mandamos diretcamente lo que hemos procesado
+          EmailAuth.facturaCompra({
+          email:req.user?.email!,
+          curso:req.body.courseName,
+          costo:req.body.costo,
+          intructor:req.body.instructorName
+        })
+        res.send("probando")
       }catch(err){
         console.log(err)
         res.send("Error en el servidor")
       }
     }
-*/
+
+}*/
