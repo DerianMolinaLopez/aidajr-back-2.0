@@ -1,7 +1,8 @@
+
+
 import mongoose, { Schema, Document, Types, PopulatedDoc,ObjectId } from 'mongoose';
 import { InstructorInter } from './Instructor';
 import { StudentInter } from './Student';
-import Section, { SectionsInter } from './Sections';
 
 export interface CoursesInter extends Document {
     name: string;

@@ -1,16 +1,17 @@
 import { Request, Response } from 'express';
-import { ObjectId,Types } from 'mongoose';
+import { ObjectId, Types } from 'mongoose';
 import Section from '../models/Sections';
+import { Section as singleSectionType, Sections } from '../type/type';
 import Courses from '../models/Courses';
 class SectionController {
     // Crear una nueva sección
-    public static async createSection(req: Request, res: Response){
+    public static async createSection(req: Request, res: Response) {
         try {
-            const { name, course,description } = req.body;
+            const { name, course, description } = req.body;
             const courseExists = await Courses.findById(course);//EXISTENCIA DE CURSO POR EL ID
-            if(!courseExists) return res.status(404).json({message: 'Curso no encontrado'});
-        
-            const newSection = new Section({ name,course, description });
+            if (!courseExists) return res.status(404).json({ message: 'Curso no encontrado' });
+
+            const newSection = new Section({ name, course, description });
             courseExists.sections.push(newSection._id as ObjectId);
             Promise.all([newSection.save(), courseExists.save()]);
             res.status(201).json(newSection);
@@ -19,6 +20,29 @@ class SectionController {
             res.status(400).json({ message: 'Error al crear la sección', error });
         }
     }
+    //creacion dee vaarioas secciones 
+    public static async createMultipleSections(req: Request, res: Response){
+        try {
+            const { secciones,course } = req.body;
+            console.log(course)
+            const courseExists = await Courses.findById(course);
+            
+            if(!courseExists) return res.status(404).json({message: 'Curso no encontrado'});
+            
+            const promises = secciones.map(async (section:Sections) => {
+                const newSection = new Section({...section, course});
+                courseExists.sections.push(newSection._id as ObjectId);
+                return newSection.save();
+            });
+            
+            await Promise.all([promises, courseExists.save()]);
+            res.status(201).json({message: 'Secciones creadas con éxito'});
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({ message: 'Error al crear las secciones', error });
+        }
+    }
+    
 
     // Obtener todas las secciones
     public static async getSections(req: Request, res: Response): Promise<void> {
@@ -32,10 +56,12 @@ class SectionController {
     // Obtener todas las secciones de un determinado curso
     public static async getSectionsByCourse(req: Request, res: Response): Promise<void> {
         try {
-            const {course} = req.params;
+            const { course } = req.params;
             const sections = await Courses.findById(course).populate(
-                { path:'sections', 
-                  select:{'name':1,'description':1}}).select('sections');
+                {
+                    path: 'sections',
+                    select: { 'name': 1, 'description': 1 }
+                }).select('sections');
             console.log(sections)
             res.status(200).json(sections);
         } catch (error) {

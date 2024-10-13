@@ -22,11 +22,21 @@ routerAuth.post('/register',
     }),
     handleErrors,
     AuthController.register);
+routerAuth.post('/registerMany', AuthController.registerMany);
 routerAuth.post('/login',
     body('email').isEmail(),
     body('password').isString().isLength({ min: 6 }),
     handleErrors,
     AuthController.login);
+
+    routerAuth.post('/login-payment',
+        body('email').isEmail(),
+        body('password').isString().isLength({ min: 6 }),
+        body('price').notEmpty(),
+        body('numberCard').isString().notEmpty(),
+        body('tittle').isString().notEmpty(),
+        handleErrors,
+        AuthController.loginConfirmPayment);
 
 
 routerAuth.get('/populate',

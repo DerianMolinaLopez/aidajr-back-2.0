@@ -41,7 +41,10 @@ class CoursesController {
     static async getNewCourses(req: Request, res: Response) {
         try {
             //obtener los ultimos cursos creados
-            const courses = await Courses.find().sort({created_at: -1}).limit(5).select('name description id').populate('instructor_Id', 'name');
+            const courses = await Courses.find().sort({created_at: -1})
+                                         .limit(5)
+                                         .select('name description id')
+                                         .populate('instructor_Id', 'name');
             res.status(200).json(courses);
         
         } catch (error) {

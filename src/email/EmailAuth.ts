@@ -24,6 +24,11 @@ export type EnvioConfirmarCurso ={
     intructor:string,
     user:string
 }
+export type compraPeriodos = formInputConfirmPayment &{
+    tittle:string
+    price:string
+    numberCard:string
+} & Pick<ConfirmarCompra,'email'>
 
 
 class EmailAuth{
@@ -78,5 +83,33 @@ class EmailAuth{
             `
           })
     }
+    static async facturaCompraPeriodos(compra:compraPeriodos){
+        await transport.sendMail({
+            from: 'AIDAjr <AIDAjr@gmail.com>',
+            to: compra.email,
+            subject: 'Ticket de compra',
+            text:      `Ticket de compra de instructor para periodos ${compra.tittle}`,
+            html:`
+            <main style="font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
+                <h2 style="color: #333;">Gracias por la confianza</h2>
+                <p style="color: #555; line-height: 1.5;">
+                    ¡Gracias por su compra! apreciamos que haya considerado unirse a nuestro equipo de trabajo <br />
+                    ahora tiene acceso a los beneficios de su paquete comprado <br />
+                    si tiene dudas sobre nuestras politicas de cancelacion  de devolucion, le recomendamos leer los terminos y condiciones
+                </p>
+                <p style="color: #333; font-weight: bold;">El cargo se realizo a la tarjeta con el numero: <span style="color: #007bff;">${compra.numberCard}</span>.</p>
+                <p style="color: #333; font-weight: bold;">Has comprado el periodo <span style="color: #007bff;">${compra.tittle}</span>.</p>
+                <p style="color: #333;">Con un costo de <strong style="color: #e74c3c;">$${compra.price} MXN</strong>.</p>
+
+                <p>Para proteger la integridad de nuestros clientes, su numero de seguridad como su numerode cuenta
+                    no se guardaran en nuestro sistema, por lo que le recomendamos guardar esta informacion en un lugar seguro
+                    y guardar el recibo de compra, de lo contrario no seria posible una devolucion o reclamacion en un futuro pronto.
+                </p>
+          </main>`
+
+          })
+    }
 }
+    
+
 export default EmailAuth;

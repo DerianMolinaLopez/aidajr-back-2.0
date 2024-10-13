@@ -1,0 +1,34 @@
+[
+    {
+        "name": "User 1",
+        "email": "user1@example.com",
+        "password": "password123",
+        "type_user": "student"
+    },
+    {
+        "name": "User 2",
+        "email": "user2@example.com",
+        "password": "password456",
+        "type_user": "instructor"
+    },
+    {
+        "name": "User 3",
+        "email": "user3@example.com",
+        "password": "password789",
+        "type_user": "student"
+    },
+    {
+        "name": "User 4",
+        "email": "user4@example.com",
+        "password": "passwordabc",
+        "type_user": "instructor"
+    },
+    {
+        "name": "User 5",
+        "email": "user5@example.com",
+        "password": "passworddef",
+        "type_user": "student"
+    }
+]
+
+
