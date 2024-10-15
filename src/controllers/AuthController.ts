@@ -6,8 +6,11 @@ import Instructor from "../models/Instructor";
 import bcrypt from 'bcrypt';
 import { UserAux } from "../type/type";
 import { createJWTToken } from "../helpers/createJWTToken";
-import EmailAuth, { compraPeriodos } from "../email/EmailAuth";
+import EmailAuth, { compraPeriodos, IEmailAuth } from "../email/EmailAuth";
+//para recuperacion de cuenta
+import { generadorToken } from "../helpers/generadorToken";
 
+import Token from "../models/Token";
 class AuthContoller{
     static async prueba( req:Request,res:Response){
         const users = await User.find();
@@ -190,6 +193,64 @@ class AuthContoller{
     static async getPopulate(req:Request,res:Response){
         const users = await User.find().populate('studentId');
         res.send(users);
+    }
+    //recoverPassword
+    static async recoverPassword(req:Request,res:Response){
+        //generar un token
+        //1- si existe el usuario con ese email
+        //2- generar token
+        //3-gaurdar el token
+        //4- enviar el token al correo
+        const {email} = req.body
+        const userExist = await User.findOne({email});
+        if(!userExist) return res.status(400).json({message:"El usuario no existe"});
+        const token = generadorToken();
+        const tokenDocument = new Token({token,email});
+         console.log(tokenDocument)
+        await tokenDocument.save();
+        const data : IEmailAuth ={
+            token,
+            email
+        }
+        await EmailAuth.sendCodeForgotPassword(data);
+        
+    res.send("Se ha enviado un token de recuperacion a su correo");
+    }
+    static async checkToken(req:Request,res:Response){
+        //verificar si el token existe 
+        
+        const {token} = req.body;
+        const tokenExist = await Token.findOne({token})
+        if(!tokenExist) return res.status(400).json({message:"El token no existe verifica tu correo"});
+        res.json({
+            email:tokenExist.email
+        })
+      
+    
+    }
+        static async changePassword(req: Request, res: Response) {
+        try {
+            const { email, password, passworRepeat, token } = req.body;
+            if (password !== passworRepeat) {
+                return res.status(400).json({ message: "Las contraseñas no coinciden" });
+            }
+            // buscar el usuario
+            const userExist = await User.findOne({ email });
+            if (!userExist) return res.status(400).json({ message: "El usuario no existe" });
+            // encriptar la contraseña
+            const passwordHash = await bcrypt.hash(password, 10);
+            // actualizar la contraseña
+            userExist.password = passwordHash;
+            // eliminación del token
+            const tokenExist = await Token.findOne({ token });
+            if (!tokenExist) return res.status(400).json({ message: "El token no existe" });
+            await Promise.all([tokenExist.deleteOne, userExist.save()]);
+            console.log(`Token ${token} eliminado correctamente`); // Línea de registro para verificar la eliminación del token
+            res.send("contraseña actualizada correctamente");
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({ message: 'Error en el servidor' });
+        }
     }
 }
 export default AuthContoller;

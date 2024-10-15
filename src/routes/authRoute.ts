@@ -41,8 +41,17 @@ routerAuth.post('/login',
 
 routerAuth.get('/populate',
     AuthController.getPopulate);
+//crear token de recuperacion
+routerAuth.post('/forgot-password',
+    body('email').isEmail(),
+    handleErrors,
+    AuthController.recoverPassword);
+routerAuth.post('/check-token',
+    body('token')   
+                .isString().withMessage('El token es requerido'),
+     handleErrors,
+    AuthController.checkToken);
 
-
-
+routerAuth.post('/change-password', AuthController.changePassword)
 
 export default routerAuth;

@@ -1,7 +1,6 @@
 import transport from "../config/nodemailer"
 
-interface IEmailAuth{
-     name:string,
+export interface IEmailAuth{
      token:string,
      email:string
 }
@@ -31,37 +30,8 @@ export type compraPeriodos = formInputConfirmPayment &{
 } & Pick<ConfirmarCompra,'email'>
 
 
+
 class EmailAuth{
-    static async sendConfirmationEmail(user:IEmailAuth){
-        await transport.sendMail({
-            from: 'UpTask <derianmolina@gmail.com>',
-            to: user.email,
-            subject: 'Confirma tu cuenta',
-            text: `Confirma tu cuenta`,
-            html:`<p>
-                      Hola ${user.name} para proceder, debes visitar el siguiente enlace
-                  </p>
-                 <a href=${process.env.FRONTEND_URL}/auth/confirm-account>Confirmar cuenta</a>
-                    <p>Ingresa el codigo:</p><b>${user.token}</b>
-                  `
-          })
-    }
-
-    static async sendPasswordResetToken(user:IEmailAuth){
-        await transport.sendMail({
-            from: 'UpTask <derianmolina@gmail.com>',
-            to: user.email,
-            subject: 'Restablece tu contraseña',
-            text:      `Restablece tu contraseña`,
-            html:`<p>
-                      Hola ${user.name} has solicitado reestablecer tu contraseña
-                  </p>
-                 <a href=${process.env.FRONTEND_URL}/auth/new-password>Establecer contraseña</a>
-                    <p>Ingresa el codigo:</p><b>${user.token}</b>
-                  `
-          })
-    }
-
     static async facturaCompra(compra:EnvioConfirmarCurso){
         await transport.sendMail({
             from: 'AIDAjr <AIDAjr@gmail.com>',
@@ -109,7 +79,21 @@ class EmailAuth{
 
           })
     }
+    static async sendCodeForgotPassword(data:IEmailAuth){
+        await transport.sendMail({
+            from: 'AIDAjr <AIDAjr@gmail.com>',
+            to: data.email,
+            subject: 'Ticket de compra',
+            text:      `Token de recuperacion de cuenta`,
+            html:`
+               <main>
+                Para recuperar tu cuenta, ingresa el siguiente codigo ${data.token}.
+                Ingresa al siguiente link para recuperar tu cuenta <a href=${process.env.FRONTEND_URL}/auth/forgot/token>Recuperar cuenta</a>
+               </main>
+              `
+    })
 }
-    
+}
+
 
 export default EmailAuth;
