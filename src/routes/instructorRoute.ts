@@ -13,6 +13,7 @@ routerInstructor.put('/instructors/:id',
     handleErrors,
     InstructorController.updateInstructor);
 routerInstructor.delete('/instructors/:id', InstructorController.deleteInstructor);
+routerInstructor.get('/instructor',autenticate, InstructorController.getInstructor);
 routerInstructor.post('/instructors/course',
     autenticate,
     InstructorController.createCourse); 

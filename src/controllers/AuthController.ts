@@ -150,12 +150,12 @@ class AuthContoller{
   */
     static async loginConfirmPayment(req: Request, res: Response) {
         try {
-            const { email, password } = req.body;
-
+            const { email, password,tittle } = req.body;
             // Verificar que el email sea válido
             if (!email || !password) {
                 return res.status(400).json({ message: 'Email y contraseña son requeridos' });
             }
+
 
             const userExist = await User.findOne({ email }).populate('studentId');
             
@@ -168,6 +168,12 @@ class AuthContoller{
             if (!passwordMatch) {
                 return res.status(400).json({ message: 'Contraseña incorrecta' });
             }
+            //verificamos primero si es que el usuario ya tiene un plan de pago
+            console.log("antes de la verificacion"+userExist.plazoPago)
+            if(userExist.plazoPago!="") return res.status(400).json({message:"Ya tienes un plan de pago activo, de querer renovarlo contacta a soporte"});
+            
+            
+            userExist.plazoPago = tittle;
             const data : compraPeriodos ={
                 email,
                 password,
@@ -177,7 +183,7 @@ class AuthContoller{
                 numberCard:req.body.numberCard
             }
             EmailAuth.facturaCompraPeriodos(data)
-
+             userExist.save();
             res.send('Hemos enviado a su correo electornico la factura de la compra.');
 
             
@@ -202,6 +208,7 @@ class AuthContoller{
         //3-gaurdar el token
         //4- enviar el token al correo
         const {email} = req.body
+        console.log(email)
         const userExist = await User.findOne({email});
         if(!userExist) return res.status(400).json({message:"El usuario no existe"});
         const token = generadorToken();

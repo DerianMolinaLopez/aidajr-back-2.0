@@ -1,6 +1,7 @@
+import cors from 'cors'
 import Express, { json, Router }  from 'express';
 import morgan from 'morgan';
-import cors from 'cors'
+
 import roterAuth from './routes/authRoute';
 import dotenv from 'dotenv';
 import {conectDB} from './database';
@@ -18,7 +19,6 @@ import routerSection from './routes/sectionRoute';
     app.use(json());
     app.use(cors());
     conectDB();
-
 
 //middlewares
     app.use(morgan('dev'));

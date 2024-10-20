@@ -9,6 +9,7 @@ export interface UserInter extends Document{
     studentId?: PopulatedDoc<StudentInter & Document>;
     instructorId?: PopulatedDoc<InstructorInter & Document>;
     type_user: string;
+    plazoPago?:string;
 }
 const UserSchema:Schema = new Schema({
     name:{
@@ -22,6 +23,11 @@ const UserSchema:Schema = new Schema({
         trim: true,
         unique: true,
         lowercase: true
+    },
+    plazoPago:{
+        type: String,
+        required: false,
+        trim: true
     },
     password:{
         type: String,

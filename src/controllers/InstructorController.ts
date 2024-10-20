@@ -3,6 +3,7 @@ import Instructor from '../models/Instructor';
 import User from '../models/User';
 import { InstructorInter } from '../models/Instructor';
 import Courses from '../models/Courses';
+import { InstructorUsuario } from '../type/type';
 class InstructorController {
     
 
@@ -28,7 +29,14 @@ class InstructorController {
             res.status(500).json({ message: 'Error al obtener el instructor', error });
         }
     }
+      static async getInstructor(req: Request, res: Response) {
+        try {
 
+            res.status(200).json(req.user);
+        } catch (error) {
+            res.status(500).json({ message: 'Error al obtener el instructor', error });
+        }
+    }
     // Actualizar un instructor por ID
     static async updateInstructor(req: Request, res: Response) {
         /**
