@@ -18,4 +18,12 @@ routerInstructor.post('/instructors/course',
     autenticate,
     InstructorController.createCourse); 
 
+/*
+Metodos creacionales para
+--crear grupos
+--crear tareas
+-- crear codigos de union
+*/
+routerInstructor.get('/instructors/unionCode/:groupId', autenticate, InstructorController.unionCode);
+
 export default routerInstructor;

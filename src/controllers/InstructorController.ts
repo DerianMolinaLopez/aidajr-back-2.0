@@ -4,6 +4,8 @@ import User from '../models/User';
 import { InstructorInter } from '../models/Instructor';
 import Courses from '../models/Courses';
 import { InstructorUsuario } from '../type/type';
+import { generadorToken } from '../helpers/generadorToken';
+import UnionCode from '../models/UnionCode';
 class InstructorController {
     
 
@@ -111,6 +113,21 @@ class InstructorController {
         } catch (error) {
             res.status(500).json({ message: 'Error al crear el curso', error });
         }
+    }
+          /** 
+         * 2- Total de alumnos por instructor
+         *
+         * @param {IdCurso}  - Entrada por via props.
+         * @returns {number} - codigo de union enviado via  json 
+       */
+    static async unionCode (req: Request, res: Response) {
+        //-algoritmo para generar un codigo de union segun x numeros
+        const {groupId} = req.params
+        const codigo = generadorToken()
+        const codigoUnion = new UnionCode({code: codigo, group: groupId})
+        await codigoUnion.save()
+        console.log("codigo de union",codigoUnion)
+        res.status(200).json({codigo:codigoUnion.code})
     }
 }
 
