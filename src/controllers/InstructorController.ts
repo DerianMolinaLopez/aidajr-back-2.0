@@ -31,10 +31,45 @@ class InstructorController {
             res.status(500).json({ message: 'Error al obtener el instructor', error });
         }
     }
+
+      //!como es un metodo de extraccion de datos del instuctor este metodo va a seguir creciondo por el requerimiento de peticiones diferenets
       static async getInstructor(req: Request, res: Response) {
         try {
+            const idInstructor = req.user?.instructorId;
+            //los que tienen codigo de union los guardare con el nombre, y el codigo de union y el id
+            //los que no tienen, solo el nombre, el tipo y el id
+            let cursosConCodigoUnion: any[] = []
+            let cursosSinCodigoUnion: any[] = []
+            //extraccion de todos los grupos de ese instructor
+            if(idInstructor){
+                //estos cursos son todo curso, pero hay que ver, que cursos no tienen codigo de union
+                const instructor = await Instructor.findById(idInstructor).select('_id')
+                if (!instructor) return res.status(404).json({ message: 'Instructor no encontrado' });
+                //buscamos los cursos que tengan el id del instructor
+                //si tienn codigo de union, entonces los mandamos, y los que no tienen codigo de union
+                //los ponemos en otro arreglo
+                const cursos = await Courses.find({ instructor_Id: instructor._id });
+                const codigos = await UnionCode.find({group: cursos.map(curso => curso._id)})
+                //con codigo
+                for (let i = 0; i < codigos.length; i++) {
+                    const cursoCodigo = await Courses.findById(codigos[i].group)
+                    cursosConCodigoUnion.push({curso: cursoCodigo, codigo: codigos[i].code})
+                    
+                }
+                //sin codigo
+            
+                console.log(cursosConCodigoUnion)
 
-            res.status(200).json(req.user);
+           
+            }
+            res.status(200).json({
+                usuario:req.user,
+                cursosConCodigoUnion,
+            });
+
+            //agregar los grupos que contiene el instructor
+
+          
         } catch (error) {
             res.status(500).json({ message: 'Error al obtener el instructor', error });
         }
@@ -128,6 +163,46 @@ class InstructorController {
         await codigoUnion.save()
         console.log("codigo de union",codigoUnion)
         res.status(200).json({codigo:codigoUnion.code})
+    }
+    
+    /*
+    
+_id
+67041ccf5ebfd796cb6ebdc3
+name---
+"Curso de Word Básico"
+description--
+"Aprende a usar las herramientas básicas de Microsoft Word, como format…"
+instructor_Id--se asignara el id del instructor
+670421bcf168e5fda8de9251
+
+course_students--se iniciara como array vacio
+Array (empty)
+tipoCurso--se agregara como 3 tipos solamente
+"word"
+valoration
+0
+
+sections
+Array (empty)
+start_date
+2024-10-07T17:39:27.610+00:00
+end_date
+2024-10-07T17:39:27.610+00:00
+__v
+0
+    */
+    static async crearGrupo (req: Request, res: Response) {//en realidad los grupos se crear como si fueran cursos
+        try{
+           //name
+           //descripcion
+           //instructor_Id
+           //course_students
+
+           //tipoCurso
+        }catch(error){
+            res.status(500).json({ message: 'Error al crear el grupo', error });
+        }
     }
 }
 
