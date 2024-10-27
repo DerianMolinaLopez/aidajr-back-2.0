@@ -6,6 +6,11 @@ export interface IUnionCode extends Document {
 }
 
 const UnionCodeSchema: Schema = new Schema({
+    instructorId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        trim: true,
+    },
     code: {
         type: String,
         required: true,

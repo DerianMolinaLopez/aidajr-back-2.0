@@ -28,6 +28,6 @@ Metodos creacionales para
 -- crear codigos de union
 */
 routerInstructor.get('/instructor/crear-grupo', autenticate, InstructorController.crearGrupo);//crear grupos
-routerInstructor.get('/instructors/unionCode/:groupId', autenticate, InstructorController.unionCode);
+routerInstructor.post('/instructors/unionCode/:groupId', autenticate, InstructorController.unionCode);
 
 export default routerInstructor;

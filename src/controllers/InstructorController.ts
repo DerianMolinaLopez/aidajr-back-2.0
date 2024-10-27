@@ -39,6 +39,7 @@ class InstructorController {
             //los que tienen codigo de union los guardare con el nombre, y el codigo de union y el id
             //los que no tienen, solo el nombre, el tipo y el id
             let cursosConCodigoUnion: any[] = []
+            
             let cursosSinCodigoUnion: any[] = []
             //extraccion de todos los grupos de ese instructor
             if(idInstructor){
@@ -52,21 +53,19 @@ class InstructorController {
                 const codigos = await UnionCode.find({group: cursos.map(curso => curso._id)})
                 //con codigo
                 for (let i = 0; i < codigos.length; i++) {
+                    
                     const cursoCodigo = await Courses.findById(codigos[i].group)
                     cursosConCodigoUnion.push({curso: cursoCodigo, codigo: codigos[i].code})
                     
-                }
-                //sin codigo
-            
-                console.log(cursosConCodigoUnion)
-
-           
+                }   
+                res.status(200).json({
+                    usuario:req.user,
+                    cursosConCodigoUnion,
+                    cursos
+                });
+        
             }
-            res.status(200).json({
-                usuario:req.user,
-                cursosConCodigoUnion,
-            });
-
+            
             //agregar los grupos que contiene el instructor
 
           
@@ -74,6 +73,22 @@ class InstructorController {
             res.status(500).json({ message: 'Error al obtener el instructor', error });
         }
     }
+
+/*
+
+for (let curso of cursos) {
+                    if (cursosConCodigoUnionIds.includes(curso._id.toString())) {
+                        const codigoUnion = codigos.find(codigo => codigo.group.toString() === curso._id.toString());
+                        cursosConCodigoUnion.push({ curso, codigo: codigoUnion?.code });
+                    } else {
+                        cursosSinCodigoUnion.push({ curso, tipo: 'sin codigo de union' });
+                    }
+                }
+    
+*/
+
+
+
     // Actualizar un instructor por ID
     static async updateInstructor(req: Request, res: Response) {
         /**
@@ -157,9 +172,19 @@ class InstructorController {
        */
     static async unionCode (req: Request, res: Response) {
         //-algoritmo para generar un codigo de union segun x numeros
-        const {groupId} = req.params
+        //verificamos si hay un codigo con ese grupo
+        const codigoExist = await UnionCode.findOne({group: req.params.groupId})
+        if(codigoExist) {
+            //si eexiste actualizamos
+            const codigo = generadorToken()
+            codigoExist.code = codigo
+            await codigoExist.save()
+            return res.status(200).send("Codigo de union actualizado")
+        }
+        //si no, hacemos la generacion comun y corriente
+        const {groupId} = req.params//en relidad esto es el id del curso
         const codigo = generadorToken()
-        const codigoUnion = new UnionCode({code: codigo, group: groupId})
+        const codigoUnion = new UnionCode({code: codigo, group: groupId, instructorId: req.user?.instructorId})
         await codigoUnion.save()
         console.log("codigo de union",codigoUnion)
         res.status(200).json({codigo:codigoUnion.code})
