@@ -6,6 +6,7 @@ import Courses from '../models/Courses';
 import { InstructorUsuario } from '../type/type';
 import { generadorToken } from '../helpers/generadorToken';
 import UnionCode from '../models/UnionCode';
+import CoursesController from './CursosController';
 class InstructorController {
     
 
@@ -58,10 +59,17 @@ class InstructorController {
                     cursosConCodigoUnion.push({curso: cursoCodigo, codigo: codigos[i].code})
                     
                 }   
+                //enviamos tambien los cursos de ese instructor
+                const cursosINstructor = Instructor.findById(idInstructor).populate('courses')
+                //@ts-ignore
+                const {courses} = cursosINstructor
+
                 res.status(200).json({
                     usuario:req.user,
                     cursosConCodigoUnion,
-                    cursos
+                    cursos,
+                    courses
+                   
                 });
         
             }
@@ -217,18 +225,56 @@ end_date
 __v
 0
     */
-    static async crearGrupo (req: Request, res: Response) {//en realidad los grupos se crear como si fueran cursos
-        try{
-           //name
-           //descripcion
-           //instructor_Id
-           //course_students
 
-           //tipoCurso
-        }catch(error){
+
+
+    static async crearGrupo (req: Request, res: Response) {
+        try {
+            console.log("en creacion del grupo");
+            // el id del instructor viene en la autenticacion
+            // name
+            // description
+            // instructor_Id
+            // course_students
+            // tipoCurso
+            const { name, description, tipoCurso } = req.body; // Corregido: descripction -> description
+            const curso = await Courses.findOne({ name });
+            if (curso) return res.send("Hay un curso ya con ese nombre, intenta con uno diferente");
+            
+            const idInstructor = req.user?.instructorId;
+            if (!idInstructor) return res.status(401).json({ message: "No autorizado" });
+            
+            const crearCurso = new Courses({ name, description, instructor_Id: idInstructor, tipoCurso });
+            //luego, agregamos ese curso al id del instructor
+            const instructor = await Instructor.findById(idInstructor);
+            //@ts-ignore
+            instructor?.courses.push(crearCurso._id);
+
+            await instructor?.save();   
+            await crearCurso.save();
+            
+            res.send("Curso creado con exito");
+        } catch (error) {
+            console.log(error);
             res.status(500).json({ message: 'Error al crear el grupo', error });
         }
     }
-}
+    static async obtenerCursosInstructor (req: Request, res: Response) {
+        try {
+            const idInstructor = req.user?.instructorId;
+            const instructor = await Instructor.findById(idInstructor).populate('courses');
+            //@ts-ignore
+            if(instructor?.courses.length >= 0)
+            {
+                res.json(instructor?.courses);
+            }
+            res.json({message: "No hay cursos"});
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: 'Error al crear el grupo', error });
+        }
+    }
 
+
+}
 export default InstructorController;

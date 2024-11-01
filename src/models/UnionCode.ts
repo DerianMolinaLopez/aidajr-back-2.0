@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, ObjectId } from 'mongoose';
 export interface IUnionCode extends Document {
     code: string;
     group: ObjectId;
+    instructorId: ObjectId;
 }
 
 const UnionCodeSchema: Schema = new Schema({

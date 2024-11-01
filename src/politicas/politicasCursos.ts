@@ -38,3 +38,12 @@ export const politicasCursosComprasDetail = [
     body('curso').isString().notEmpty().withMessage('Es necesairo enviar todos los campos'),
     body('instructor').isString().notEmpty().withMessage('Es necesairo enviar todos los campos'),
    ]
+          //name
+           //descripcion
+           //tipoCurso
+export const politicasCrearCursoInstructor = [
+    body('name').isString().notEmpty().withMessage('El nombre es requerido'),
+    body('description').isString().notEmpty().withMessage('La descripcion es requerida'),
+    body('tipoCurso').isString().notEmpty().withMessage('El tipo de curso es requerido'),
+    
+]

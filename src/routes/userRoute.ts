@@ -23,4 +23,6 @@ userRoute.post('/confirm/ticket',autenticate
                                  ,politicasCursosCompras,
                                  handleErrors,
                                 Usercontroller.confirmTicket)*/
+//decodificar codigo de union
+userRoute.get("/student/course/unionCode/:unionCode",autenticate,Usercontroller.decodigfyUnionCode)
 export default userRoute;

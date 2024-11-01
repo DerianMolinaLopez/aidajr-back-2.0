@@ -8,6 +8,7 @@ import { formatearCursos } from "../helpers/formatearCursos";
 import bcrypt from "bcrypt";
 import EmailAuth, { EnvioConfirmarCurso } from "../email/EmailAuth";
 import { populate } from "dotenv";
+import UnionCode from "../models/UnionCode";
 export class Usercontroller{
     static async getStudent(req:Request,res:Response){
     res.json({estudiante:req.user})
@@ -89,34 +90,7 @@ export class Usercontroller{
 
 
 
-    static async addCourseStudent(req:Request,res:Response){
-      try{
-      //1- el id del alumno esta en el autenticado
-      //2- el id del curso esta en el body
-      //3- busscar el estudiante
-      //4- buscar el curso
-      //5- crear el detalle del curso
-      //6- agregar el detalle al estudiante
-      //7- guardar el estudiante
-      //8- enviar respuesta
-      const {id_course} = req.body
-      const student = req.user?.studentId
-      const studentExist = await Student.findById(student)
-      const courseExist = await Courses.findById(id_course)
-      if(!studentExist)return res.status(400).json({message:"Estudiante no encontrado"})
-      if(!courseExist)return res.status(400).json({message:"Curso no encontrado"})
-      const studentCourse = await Student_Courses.create({student:studentExist,course:courseExist})
-       courseExist.course_students.push(studentCourse.id)
-        studentExist.cursos.push(studentCourse.id)
-      await Promise.all([courseExist.save(),studentExist.save(), studentCourse.save()])
-
-      console.log(studentCourse)
-      res.send("Estudiante agregado al curso con exito")
-      }catch(err){
-        console.log(err)
-        res.send("Error en el servidor")
-      }
-    }
+    
 
 
     static async agregarAlumnoPago(req:Request,res:Response){
@@ -196,6 +170,67 @@ export class Usercontroller{
         res.send("Error en el servidor")
       }
     }
+    /********eventos para el proceso de agregar un curso por medio de codigo de union */
+    static async decodigfyUnionCode(req:Request,res:Response){
+      try{
+        const {unionCode} = req.params
+        const unionCodeExist = await UnionCode.findOne({code:unionCode})
+        if(!unionCodeExist) return res.status(400).send("Codigo de union no valido")
+      //    console.log(unionCodeExist)
+        const instructor = unionCodeExist.instructorId
+          const grupo = unionCodeExist.group
+          const instructorDetalle = await User.findOne({ instructorId:instructor}).select("name")
+        //  console.log(instructorDetalle)
+          const cursos = await Courses.findById(grupo)
+          const cursoEncontrado = {
+            tipoCurso : cursos?.tipoCurso,
+            name: cursos?.name,
+            description: cursos?.description,
+            instructor:{
+              name: instructorDetalle?.name,
+              _id: instructorDetalle?._id
+            }
+          }
+        //console.log(cursoEncontrado)
+        
+      res.json(cursoEncontrado)
+      }catch(err){
+        console.log(err)
+        res.send("Error en el servidor")
+      }
+    }
+    
+
+    static async addCourseStudent(req:Request,res:Response){
+      try{
+      //* 1- el id del alumno esta en el autenticado
+      //* 2- el id del curso esta en el body
+      //* 3- busscar el estudiante
+      //* 4- buscar el curso
+      //* 5- crear el detalle del curso
+      //* 6- agregar el detalle al estudiante
+      //* 7- guardar el estudiante
+      //* 8- enviar respuesta
+      const {id_course} = req.body
+      const student = req.user?.studentId
+      const studentExist = await Student.findById(student)
+      const courseExist = await Courses.findById(id_course)
+      if(!studentExist)return res.status(400).json({message:"Estudiante no encontrado"})
+      if(!courseExist)return res.status(400).json({message:"Curso no encontrado"})
+      const studentCourse = await Student_Courses.create({student:studentExist,course:courseExist})
+       courseExist.course_students.push(studentCourse.id)
+        studentExist.cursos.push(studentCourse.id)
+      await Promise.all([courseExist.save(),studentExist.save(), studentCourse.save()])
+
+      console.log(studentCourse)
+      res.send("Estudiante agregado al curso con exito")
+      }catch(err){
+        console.log(err)
+        res.send("Error en el servidor")
+      }
+    }
+
+    /********eventos para el proceso de agregar un curso por medio de codigo de union */
     
 
 }

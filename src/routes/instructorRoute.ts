@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import InstructorController from '../controllers/InstructorController';
-import { updateUserRequeriments } from '../politicas/politicasCursos';
+import { politicasCursosCompras, updateUserRequeriments } from '../politicas/politicasCursos';
 import { autenticate } from '../middlewares/autenticate';
 import { handleErrors } from '../middlewares/handleErrores';
+import { politicasCrearCursoInstructor } from '../politicas/politicasCursos';
 const routerInstructor = Router();
 
 // Rutas CRUD para los instructores
@@ -27,7 +28,11 @@ Metodos creacionales para
 --crear tareas
 -- crear codigos de union
 */
-routerInstructor.get('/instructor/crear-grupo', autenticate, InstructorController.crearGrupo);//crear grupos
+routerInstructor.post('/instructor/crear-grupo', autenticate, 
+                                                 politicasCrearCursoInstructor,
+                                                  handleErrors,
+                                                   InstructorController.crearGrupo);//crear grupos
 routerInstructor.post('/instructors/unionCode/:groupId', autenticate, InstructorController.unionCode);
+routerInstructor.get('/instructor/getCourses', autenticate, InstructorController.obtenerCursosInstructor);
 
 export default routerInstructor;
