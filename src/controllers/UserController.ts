@@ -50,7 +50,7 @@ export class Usercontroller{
       }
     }
 
-    static async getCoursesByStudentDetail(req: Request, res: Response): Promise<void> {
+    static async getCoursesByStudentDetail(req: Request, res: Response): Promise<void> {//! arroja error
       try {
           // 1- id del usuario para extraer sus detalles de cursos
           const user = await Student.findById(req.user?.studentId)

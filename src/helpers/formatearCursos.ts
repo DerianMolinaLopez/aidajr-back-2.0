@@ -3,6 +3,7 @@ import Instructor from "../models/Instructor";
 import Courses from "../models/Courses";
 export  function formatearCursos(cursos: any) {
     // console.log(cursos)
+    console.log(cursos)
     /*
     {
       _id: new ObjectId('66f07f5003f80b1166ef59b1'),
@@ -19,17 +20,7 @@ export  function formatearCursos(cursos: any) {
       }
     }
     */
- 
-  console.log(cursos)
-    const data = {
-      name: cursos.course.name,
-      _id: cursos._id,
-      description: cursos.course.description,
-      tipoCurso: cursos.course.tipoCurso,
-      valoration: cursos.course.valoration,
-      instructor:cursos.course.instructor_Id.user_Id.name,
-      process: cursos.process
-    };
-  
-    return data;
+    //name, description, instructor, tipoCurso, valoration
+
+    return 
   }
