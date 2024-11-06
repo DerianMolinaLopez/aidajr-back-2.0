@@ -4,11 +4,15 @@ import Student_Courses from "../models/Student_courses";
 import { CourseShort } from "../type/type";
 import User from "../models/User";
 import Courses, { CoursesInter } from "../models/Courses";
-import { formatearCursos } from "../helpers/formatearCursos";
+import { formatearCurso } from "../helpers/formatearCursos";
+
 import bcrypt from "bcrypt";
+import { Curso } from "../type/type";
 import EmailAuth, { EnvioConfirmarCurso } from "../email/EmailAuth";
 import { populate } from "dotenv";
 import UnionCode from "../models/UnionCode";
+import { ObjectId } from "mongoose";
+import Instructor from "../models/Instructor";
 export class Usercontroller{
     static async getStudent(req:Request,res:Response){
     res.json({estudiante:req.user})
@@ -50,43 +54,7 @@ export class Usercontroller{
       }
     }
 
-    static async getCoursesByStudentDetail(req: Request, res: Response): Promise<void> {//! arroja error
-      try {
-          // 1- id del usuario para extraer sus detalles de cursos
-          const user = await Student.findById(req.user?.studentId)
-              .populate({
-                  path: "cursos",
-                  select: "course process",
-                  populate: {
-                      path: "course",
-                      select: "name description instructor_Id valoration tipoCurso",
-                      populate: {
-                          path: "instructor_Id",
-                          select: "user_Id",
-                          populate: { path: "user_Id", select: "name" }
-                      }
-                  }
-              });
-
-          // 2- de cada detalle de curso, lo procesamos para traer el curso y el instructor
-          const cursos = user?.cursos;
-          if (cursos) {
-              const formattedCourses = cursos.map(curso => {
-                  const formateado = formatearCursos(curso )
-                  console.log(formateado)
-                 return formateado
-              });
-
-              // 3- enviar respuesta formateada a un nivel
-              res.status(200).json({cursos:formattedCourses});
-          } else {
-              res.status(404).json({ message: 'No se encontraron cursos para el usuario' });
-          }
-      } catch (err) {
-          console.log(err);
-          res.status(500).json({ message: 'Error en el servidor' });
-      }
-  }
+  
 
 
 
@@ -231,24 +199,51 @@ export class Usercontroller{
     }
 
     /********eventos para el proceso de agregar un curso por medio de codigo de union */
+   
+    static async getCourseByStudentID(req: Request, res: Response) {
+      let cursosUsuarioDatos = []
+      try {
+          const idusuario = req.user?.studentId;
+          const cursosUsuario = await Student.findById(idusuario)
+          const cursos = cursosUsuario?.cursos
+          if(cursos){
+          //  console.log(cursos.length)
+             for(let i=0; i<cursos.length; i++){
+              const cursoDetalle = await Student_Courses.findById(cursos[i])
+              const curso = cursoDetalle?.course
+              const cursoCurso = await Courses.findById(curso)
+              //name
+              //description
+              //tipoCurso
+        //      console.log("desde curso")
+          //    console.log(cursoCurso)
+              const instructor = await Instructor.findById(cursoCurso?.instructor_Id)
+          //    console.log(instructor)
+              const usuarioInstructor = await User.findById(instructor?.user_Id)
+            //  console.log(usuarioInstructor)
+              const data = {
+                _id: cursoCurso?._id,
+                name: cursoCurso?.name,
+                description: cursoCurso?.description,
+                tipoCurso: cursoCurso?.tipoCurso,
+                instructor: usuarioInstructor?.name
+              }
+
+              cursosUsuarioDatos.push(data)
+           
+          }
+          console.log(cursosUsuarioDatos)
+          }
+         
+
+
+         res.json(cursosUsuarioDatos)
+  
+      } catch (err) {
+          console.log(err);
+          res.status(500).json({ message: "Error en el servidor" });
+      }
+  }
     
 
 }
- /*   static async confirmTicket(req:Request,res:Response){
-      try{
-         console.log(req.user)
-        //mandamos diretcamente lo que hemos procesado
-          EmailAuth.facturaCompra({
-          email:req.user?.email!,
-          curso:req.body.courseName,
-          costo:req.body.costo,
-          intructor:req.body.instructorName
-        })
-        res.send("probando")
-      }catch(err){
-        console.log(err)
-        res.send("Error en el servidor")
-      }
-    }
-
-}*/
