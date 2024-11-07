@@ -113,6 +113,44 @@ class SectionController {
             res.status(400).json({ message: 'Error al eliminar la sección', error });
         }
     }
+
+    // Obtener todas las tareas de una sección
+    public static async getTasksBySection(req: Request, res: Response): Promise<void> {
+        try {
+            const { sectionId } = req.params;
+            const section = await Section.findById(sectionId).populate({
+                path: 'tasks',
+                select: { 'name': 1, 'description': 1, 'startDate': 1, 'endDate': 1 }
+            });
+            if (!section) {
+                res.status(404).json({ message: 'Sección no encontrada' });
+                return;
+            }
+            res.status(200).json(section.tasks);
+        } catch (error) {
+            res.status(400).json({ message: 'Error al obtener las tareas de la sección', error });
+        }
+    }
+
+    // Contar cuántas tareas tiene una sección
+    public static async countTasksInSection(req: Request, res: Response): Promise<void> {
+        try {
+            const { sectionId } = req.params;
+
+            // Verificar que la sección exista
+            const section = await Section.findById(sectionId).populate('tasks');
+            if (!section) {
+                res.status(404).json({ message: 'Sección no encontrada' });
+                return;
+            }
+
+            // Contar el número de tareas
+            const taskCount = section.tasks.length;
+            res.status(200).json({ sectionId, taskCount });
+        } catch (error) {
+            res.status(400).json({ message: 'Error al contar las tareas en la sección', error });
+        }
+    }
 }
 
 export default SectionController;

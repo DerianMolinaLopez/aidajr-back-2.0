@@ -2,41 +2,37 @@ import mongoose, { Schema, Document, Types, PopulatedDoc } from 'mongoose';
 import { InstructorInter } from './Instructor';
 import { StudentInter } from './Student';
 import { CoursesInter } from './Courses';
+export interface SectionsInter extends Document {
+    name: String;
+    course: Types.ObjectId | CoursesInter["id"];
+    description: String;
 
-/**
- * 
- *  Nombre
-    seccion a al que pertenece
-    fechainicio
-    fechafin
-    descripcion
-    direccion de imagen de disco
- */
-
-export interface SectionsInter extends Document{
-    name:String
-    course : Types.ObjectId | PopulatedDoc<InstructorInter & Document> | CoursesInter["id"]
-    description:String
-    //!agregar un arreglo de id de tareas
+    tasks: Types.ObjectId[];  //! Arreglo de IDs de tareas interfaz de tareas
 }
-export const SectionSchema:Schema = new Schema({
 
-    name:{
+export const SectionSchema: Schema = new Schema({
+    name: {
         type: String,
         required: true,
         trim: true
     },
-    course:{
+    course: {
         type: Schema.Types.ObjectId,
         ref: 'Courses',
         required: true
     },
-    description:{
+    description: {
         type: String,
         required: true,
         trim: true
+    },
+    tasks: {
+        
+        type: [Schema.Types.ObjectId],
+        ref: 'Tasks',  // Referencia al modelo de Tasks
+        default: []
     }
-    //! tambien al esquema, y el tipo sera de ob schema.types.objectid
-})
-const Section =mongoose.model<SectionsInter>('Sections', SectionSchema)
-export default Section
+});
+
+const Section = mongoose.model<SectionsInter>('Sections', SectionSchema);
+export default Section;
