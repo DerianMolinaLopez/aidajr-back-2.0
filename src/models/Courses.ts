@@ -5,6 +5,7 @@ import { InstructorInter } from './Instructor';
 import { StudentInter } from './Student';
 
 export interface CoursesInter extends Document {
+    _id:mongoose.Types.ObjectId;
     name: string;
     description: string;
     instructor_Id: PopulatedDoc<InstructorInter & Document>;

@@ -38,3 +38,12 @@ export type Curso = {
     _id: ObjectId;
     course: Course;
 };
+
+export type CursoShort = {
+    _id:string
+    name: string;
+    description : string;
+    valoracion: number;
+    tipoCurso: string;
+    instructor:string;
+};

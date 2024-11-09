@@ -4,6 +4,7 @@ import Student_Courses from "../models/Student_courses";
 import { CourseShort } from "../type/type";
 import User from "../models/User";
 import Courses, { CoursesInter } from "../models/Courses";
+import { CursoShort } from "../type/type";
 import { formatearCurso } from "../helpers/formatearCursos";
 
 import bcrypt from "bcrypt";
@@ -151,6 +152,7 @@ export class Usercontroller{
         //  console.log(instructorDetalle)
           const cursos = await Courses.findById(grupo)
           const cursoEncontrado = {
+            _idCurso: cursos?._id,//!modificacion
             tipoCurso : cursos?.tipoCurso,
             name: cursos?.name,
             description: cursos?.description,
@@ -201,8 +203,53 @@ export class Usercontroller{
     /********eventos para el proceso de agregar un curso por medio de codigo de union */
    
     static async getCourseByStudentID(req: Request, res: Response) {
-      let cursosUsuarioDatos = []
-      try {
+    console.log(req.user
+     
+    )
+    
+  
+      try{
+        const infoAlumno = await Student.findById(req.user?.studentId).select("cursos")
+        const cursos = infoAlumno?.cursos
+        const cursosUsuarioDatos:CursoShort[] = []
+        console.log("antes de el for",cursos)
+        if(cursos && cursos.length>0){
+          console.log("dentord el for")
+            for(let i = 0; i<cursos?.length; i++){
+
+              const cursoDetalle = await Courses.findById(cursos[i])
+              const instructor =  cursoDetalle?.instructor_Id
+              const instructorDetalle = await Instructor.findById(instructor).select("user_Id")
+              const usuarioInstructor = await User.findById(instructorDetalle?.user_Id)
+              const name =usuarioInstructor?.name
+              const cursoId = cursoDetalle?._id.toString()
+              console.log(name)
+              const description = cursoDetalle?.description
+              if(cursoDetalle?.name && description && name && cursoId){
+                const data : CursoShort = {
+                  _id:cursoId,
+                  name:cursoDetalle?.name,
+                  description:description,
+                  valoracion:cursoDetalle?.valoration,
+                  tipoCurso:cursoDetalle?.tipoCurso,
+                  instructor:name
+                }
+               console.log(data)
+               cursosUsuarioDatos.push(data)
+              }
+           
+          
+            }
+            return res.json(cursosUsuarioDatos)
+        }
+      res.send(" ")
+      } catch (err) {
+          console.log(err);
+          res.status(500).json({ message: "Error en el servidor" });
+      }
+  }
+/*
+  try {
           const idusuario = req.user?.studentId;
           const cursosUsuario = await Student.findById(idusuario)
           const cursos = cursosUsuario?.cursos
@@ -228,14 +275,15 @@ export class Usercontroller{
                 tipoCurso: cursoCurso?.tipoCurso,
                 instructor: usuarioInstructor?.name
               }
-
+              console.log("despues de formar el data:"+data)
               cursosUsuarioDatos.push(data)
+              console.log(cursosUsuarioDatos)
            
           }
           console.log(cursosUsuarioDatos)
           }
          
-
+               console.log(cursosUsuarioDatos)
 
          res.json(cursosUsuarioDatos)
   
@@ -243,7 +291,49 @@ export class Usercontroller{
           console.log(err);
           res.status(500).json({ message: "Error en el servidor" });
       }
-  }
+*/
+  static async unirsePorCodigoUNION(req: Request, res: Response) {
+    try {
+        const { _idCurso } = req.body;
+
+        // Verificamos si el curso existe en el arreglo de cursos del usuario
+        const usuarioExist = await Student.findById(req.user?.studentId);
+        if(usuarioExist?.cursos.includes(_idCurso)) return res.status(400).send("Ya estás inscrito en este curso");
+
+
+        const courseExist = await Courses.findById(_idCurso);
+
+        if (!courseExist) {
+            return res.status(400).json({ message: "Curso no encontrado" });
+        }
+
+        console.log("CURSO SELECCIONADO:", courseExist);
+
+        // Crear el detalle de inscripción en el curso
+        const cursoDetalle = await Student_Courses.create({
+            student: req.user?.studentId,
+            course: courseExist._id
+        });
+
+        console.log("Detalle de curso creado con ID:", cursoDetalle._id);
+
+        // Añadir el ID del curso a `course_students` y al usuario sin usar `toString()`
+        courseExist.course_students.push(cursoDetalle.id);
+        usuarioExist?.cursos.push(courseExist.id);
+
+        // Guardar los cambios de manera simultánea
+        await Promise.all([courseExist.save(), usuarioExist?.save(), cursoDetalle.save()]);
+
+        console.log("Curso actualizado:", courseExist);
+        res.send("Estudiante agregado al curso con éxito");
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
+}
+
+
     
 
 }
