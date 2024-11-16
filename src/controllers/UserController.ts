@@ -85,7 +85,8 @@ export class Usercontroller{
       if(!courseExist)return res.status(400).json({message:"Curso no encontrado"})
       const studentCourse = await Student_Courses.create({student:studentExist,course:courseExist})
        courseExist.course_students.push(studentCourse.id)
-        studentExist.cursos.push(studentCourse.id)
+       //!cambair el id de detalle a directamente al id del curso
+        studentExist.cursos.push(courseExist.id)
         console.log("enviando el email de factura")
         EmailAuth.facturaCompra({
           email: userExist.email,
@@ -116,8 +117,8 @@ export class Usercontroller{
         console.log(req.user)
         const student = await Student.findById(req.user?.studentId)
        
-        console.log(student)
-        if(tipoCurso==='word'|| tipoCurso==='excel'||tipoCurso==='powerpoint'){
+        console.log(tipoCurso)
+        if(tipoCurso==='word'|| tipoCurso==='excel'||tipoCurso==='power'){
           const cursos = await Courses.find({ tipoCurso }).select("-course_students")
           .populate({
               path: 'instructor_Id',
@@ -128,8 +129,7 @@ export class Usercontroller{
               },
               options:{limit:4}
           });
-          console.log("-------------------")
-          console.log(cursos)
+        
            return res.send({cursos})
         }
         
@@ -218,12 +218,15 @@ export class Usercontroller{
             for(let i = 0; i<cursos?.length; i++){
 
               const cursoDetalle = await Courses.findById(cursos[i])
+              console.log(cursoDetalle)
               const instructor =  cursoDetalle?.instructor_Id
+              console.log(instructor)
               const instructorDetalle = await Instructor.findById(instructor).select("user_Id")
               const usuarioInstructor = await User.findById(instructorDetalle?.user_Id)
               const name =usuarioInstructor?.name
               const cursoId = cursoDetalle?._id.toString()
               console.log(name)
+              
               const description = cursoDetalle?.description
               if(cursoDetalle?.name && description && name && cursoId){
                 const data : CursoShort = {

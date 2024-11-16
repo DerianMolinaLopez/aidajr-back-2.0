@@ -51,7 +51,10 @@ class InstructorController {
                 //si tienn codigo de union, entonces los mandamos, y los que no tienen codigo de union
                 //los ponemos en otro arreglo
                 const cursos = await Courses.find({ instructor_Id: instructor._id });
-                
+                 
+                console.log(cursos.length)
+
+
                 const codigos = await UnionCode.find({group: cursos.map(curso => curso._id)})
                 //con codigo
                 for (let i = 0; i < codigos.length; i++) {
