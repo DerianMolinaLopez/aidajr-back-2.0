@@ -40,12 +40,12 @@ class InstructorController {
             //los que tienen codigo de union los guardare con el nombre, y el codigo de union y el id
             //los que no tienen, solo el nombre, el tipo y el id
             let cursosConCodigoUnion: any[] = []
-            
-            let cursosSinCodigoUnion: any[] = []
+            console.log("desde getInstructor")
             //extraccion de todos los grupos de ese instructor
             if(idInstructor){
                 //estos cursos son todo curso, pero hay que ver, que cursos no tienen codigo de union
                 const instructor = await Instructor.findById(idInstructor).select('_id')
+                console.log(instructor)
                 if (!instructor) return res.status(404).json({ message: 'Instructor no encontrado' });
                 //buscamos los cursos que tengan el id del instructor
                 //si tienn codigo de union, entonces los mandamos, y los que no tienen codigo de union
@@ -67,7 +67,7 @@ class InstructorController {
                 const cursosINstructor = Instructor.findById(idInstructor).populate('courses')
                 //@ts-ignore
                 const {courses} = cursosINstructor
-
+                   
                 res.status(200).json({
                     usuario:req.user,
                     cursosConCodigoUnion,

@@ -143,8 +143,11 @@ export class Usercontroller{
     static async decodigfyUnionCode(req:Request,res:Response){
       try{
         const {unionCode} = req.params
+        console.log(unionCode)
         const unionCodeExist = await UnionCode.findOne({code:unionCode})
-        if(!unionCodeExist) return res.status(400).send("Codigo de union no valido")
+        console.log(unionCodeExist)
+ 
+        if(!unionCodeExist || unionCodeExist===null) return res.status(400).send("Codigo de union no valido")
       //    console.log(unionCodeExist)
         const instructor = unionCodeExist.instructorId
           const grupo = unionCodeExist.group
