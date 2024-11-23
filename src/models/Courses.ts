@@ -15,6 +15,7 @@ export interface CoursesInter extends Document {
     tipoCurso: string;
     valoration: number;
     sections : ObjectId[];
+    valorable:boolean;
    
 }
 
@@ -63,6 +64,11 @@ const CoursesSchema: Schema = new Schema({
         type: [Schema.Types.ObjectId],
         ref: 'Sections',
         default: []
+    },
+    valorable:{
+        type:Boolean,
+        required:true,
+        default:false//!si no se especifica la valoracion, entonces queda como false
     }
 });
 

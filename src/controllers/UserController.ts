@@ -48,7 +48,7 @@ export class Usercontroller{
             
 
         }
-       res.send({cursos})
+       res.send({cursos:cursos})
       }catch(err){
         console.log(err)
         res.send("Error en el servidor")
@@ -129,8 +129,16 @@ export class Usercontroller{
               },
               options:{limit:4}
           });
-        
-           return res.send({cursos})
+
+           //agregamos validacion de traer cursos que solo sean valorables
+           //y cursos que el alumno no tenga
+           const cursosFiltrados = cursos.filter((curso)=>{
+            if(curso.valorable && !student?.cursos.includes(curso._id)){
+              return curso
+            }
+           })
+            console.log(cursosFiltrados)
+           return res.send({cursos:cursosFiltrados})
         }
         
       res.send("Tipo de curso no valido")
