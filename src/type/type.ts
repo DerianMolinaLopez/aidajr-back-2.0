@@ -1,4 +1,5 @@
 import { CoursesInter } from "../models/Courses";
+import { ObjectId } from "mongoose";
 import { UserInter } from "../models/User";
 import { SectionsInter } from "../models/Sections";
 export type CourseShort = Pick<CoursesInter, "name" | "description" | "tipoCurso" | "valoration"|"id">;
@@ -13,3 +14,36 @@ export type Sections = {sections:Section[]};
         },
 */
 export type InstructorUsuario =Pick<UserInter, "name" | "email" | "_id">;
+
+export type UserId = {
+    _id: ObjectId;
+    // Agrega aquí los campos adicionales que pueda tener el objeto user_Id
+};
+
+export type InstructorId = {
+    _id: ObjectId;
+    user_Id: UserId;
+};
+
+export type Course = {
+    _id: ObjectId;
+    name: string;
+    description: string;
+    instructor_Id: InstructorId;
+    tipoCurso: string;
+    valoration: number;
+};
+
+export type Curso = {
+    _id: ObjectId;
+    course: Course;
+};
+
+export type CursoShort = {
+    _id:string
+    name: string;
+    description : string;
+    valoracion: number;
+    tipoCurso: string;
+    instructor:string;
+};

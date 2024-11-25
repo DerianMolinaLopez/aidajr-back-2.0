@@ -47,3 +47,8 @@ export const politicasCrearCursoInstructor = [
     body('tipoCurso').isString().notEmpty().withMessage('El tipo de curso es requerido'),
     
 ]
+
+export const unirsePorCodigoUnion = [
+    body('_idCurso').isMongoId().notEmpty().withMessage('El codigo de union es requerido'),
+
+]

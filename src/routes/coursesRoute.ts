@@ -3,11 +3,13 @@ import CoursesController from "../controllers/CursosController";
 import { body } from "express-validator";
 import { handleErrors } from "../middlewares/handleErrores";
 import {createCoursesReueriments,updateCoursesReueriments} from "../politicas/politicasCursos"
+import { autenticate } from "../middlewares/autenticate";
 const routerCourses = Router();
 
 routerCourses.post('/courses',
                     createCoursesReueriments, //arreglo de restricciones
-                    handleErrors,    
+                    handleErrors,
+                    autenticate,    
                    CoursesController.createCourse);
 routerCourses.post('/courses/multi',
                     createCoursesReueriments,

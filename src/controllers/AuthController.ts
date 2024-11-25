@@ -163,6 +163,7 @@ class AuthContoller{
             if (!userExist || !mongoose.isValidObjectId(userExist._id)) {
                 return res.status(400).json({ message: 'El usuario no existe' });
             }
+            if(req.user?.type_user!="instructor") return res.status(400).json({message:"La cuenta que tienes no es de instructor asi que no es posible completar el pago"});
 
             const passwordMatch = await bcrypt.compare(password, userExist.password);
             if (!passwordMatch) {
@@ -170,7 +171,7 @@ class AuthContoller{
             }
             //verificamos primero si es que el usuario ya tiene un plan de pago
             console.log("antes de la verificacion"+userExist.plazoPago)
-            if(userExist.plazoPago!="") return res.status(400).json({message:"Ya tienes un plan de pago activo, de querer renovarlo contacta a soporte"});
+            if(userExist.plazoPago!="sin plazo") return res.status(400).json({message:"Ya tienes un plan de pago activo, de querer renovarlo contacta a soporte"});
             
             
             userExist.plazoPago = tittle;

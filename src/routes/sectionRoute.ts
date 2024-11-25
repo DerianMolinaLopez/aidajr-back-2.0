@@ -10,6 +10,5 @@ routerSection.get('/sections/course/:course', SectionController.getSectionsByCou
 routerSection.put('/sections/:id', SectionController.updateSection);
 routerSection.delete('/sections/:id', SectionController.deleteSection);
 routerSection.post('/sectionsMany', SectionController.createMultipleSections);
-routerSection.get('/sections/tasks/:id', SectionController.getTasksBySection);
-routerSection.get('/sections/counttask/:id', SectionController.countTasksInSection);
+
 export default routerSection;

@@ -9,7 +9,6 @@ import routerCourses from './routes/coursesRoute';
 import userRoute from './routes/userRoute';
 import routerInstructor from './routes/instructorRoute';
 import routerSection from './routes/sectionRoute';
-import routerTask from './routes/taskRoute';
 // initializations
     const app = Express();
     dotenv.config();
@@ -39,5 +38,5 @@ import routerTask from './routes/taskRoute';
 //auth
     app.use("/api/auth",roterAuth)
     app.use("/api/user",userRoute)
-    app.use("/api/task",routerTask)
+
     export default app;

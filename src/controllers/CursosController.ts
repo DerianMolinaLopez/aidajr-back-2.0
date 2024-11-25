@@ -6,10 +6,21 @@ class CoursesController {
     // Crear un nuevo curso
     static async createCourse(req: Request, res: Response) {
         try {
-            console.log(req.body)
+            //!es necesario guardar el id del instructor que crea el grupo
+            
+            const {name} = req.body;
+            console.log(name)
+        
+             const courseExist = await Courses.findOne({name})
+             if(courseExist) return res.status(400).send("Ya hay un curso con ese nombre")
             const course = new Courses(req.body);
+            console.log("*********************************")
+            
+             console.log(req.user?.instructorId)
+             course.instructor_Id = req.user?.instructorId;
+             console.log(course)
             await course.save();
-            res.status(201).json(course);
+            res.status(201).send("Curso creado con exito")
         } catch (error) {
             console.log(error)
             res.status(400).json({ message: 'Error al crear el curso', error });

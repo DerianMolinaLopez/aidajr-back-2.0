@@ -1,0 +1,13 @@
+Hacer el sistema de calificacionesd e un curso
+
+para eso hay que definir otro type en cursos
+
+los tipos de estos cursos, nomas seria agregar
+
+calificable
+
+y que solo sea booleanaa, si es califciable entonces se mostraran todos esos cursos
+en el banner del alumno
+
+en caso contrario, significa que solo son cursos que fueron creados por un instrcutor
+si ese es elcaso, entonces no hay necesidad de hacer una valoracion
