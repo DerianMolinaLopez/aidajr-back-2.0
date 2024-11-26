@@ -9,6 +9,7 @@ import routerCourses from './routes/coursesRoute';
 import userRoute from './routes/userRoute';
 import routerInstructor from './routes/instructorRoute';
 import routerSection from './routes/sectionRoute';
+import routerValoracion from './routes/valoracionRoute';
 // initializations
     const app = Express();
     dotenv.config();
@@ -38,5 +39,8 @@ import routerSection from './routes/sectionRoute';
 //auth
     app.use("/api/auth",roterAuth)
     app.use("/api/user",userRoute)
+
+    //valoraciones
+    app.use("/api/valoration",routerValoracion)
 
     export default app;

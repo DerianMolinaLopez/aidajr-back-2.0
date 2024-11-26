@@ -3,8 +3,11 @@
 import mongoose, { Schema, Document, Types, PopulatedDoc,ObjectId } from 'mongoose';
 import { InstructorInter } from './Instructor';
 import { StudentInter } from './Student';
+import { ValorationDetailCourseStudend } from './ValorationDetail';
+
 
 export interface CoursesInter extends Document {
+    //?agregar el campo de precio
     _id:mongoose.Types.ObjectId;
     name: string;
     description: string;
@@ -14,6 +17,7 @@ export interface CoursesInter extends Document {
     course_students: PopulatedDoc<StudentInter & Document>[];
     tipoCurso: string;
     valoration: number;
+    valorationDetail : ObjectId[];//hacemos que sea de ese tipo de valoracion o un objectId para usar dichos id
     sections : ObjectId[];
     valorable:boolean;
    
@@ -54,6 +58,11 @@ const CoursesSchema: Schema = new Schema({
         type: Date,
         required: true,
         default: Date.now
+    },
+    valorations:{//!modificacion
+        type: [Schema.Types.ObjectId],
+        ref: 'ValorationDetailCourseStudend',
+        default: []
     },
     valoration:{
         type: Number,

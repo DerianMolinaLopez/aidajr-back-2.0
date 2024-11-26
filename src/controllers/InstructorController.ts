@@ -13,7 +13,8 @@ class InstructorController {
     // Obtener todos los instructores
     static async getAllInstructors(req: Request, res: Response) {
         try {
-            const instructors = await Instructor.find().populate({path: 'user_Id', select: 'name email _instructorId'});
+            const instructors = await Instructor.find()
+                                                .populate({path: 'user_Id', select: 'name email _instructorId'});
             res.status(200).json(instructors);
         } catch (error) {
             res.status(500).json({ message: 'Error al obtener los instructores', error });

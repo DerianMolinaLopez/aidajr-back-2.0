@@ -90,13 +90,13 @@ export class Usercontroller{
         console.log("enviando el email de factura")
         EmailAuth.facturaCompra({
           email: userExist.email,
-          curso: courseExist.name,
+          curso: courseExist.name,        //!acceso al documento de curso
           costo: req.body.costo,
-          intructor: req.body.instructor,
-          user:userExist.name
+          intructor: req.body.instructor,//! documento instructor
+          user:userExist.name             //
         })
 
-        
+        // un metodo para crear un documento en la coleccion de estadistica curso 
       await Promise.all([courseExist.save(),studentExist.save(), studentCourse.save()])
 
        
