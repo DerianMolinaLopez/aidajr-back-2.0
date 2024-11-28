@@ -13,6 +13,7 @@ export interface ValorationDetailCourseStudend extends Document{
     _id:ObjectId;
     valoration:number;
     course_id:PopulatedDoc<UserInter & CoursesInter> | ObjectId ;
+    comentario:string;
 }
 //todo va a ser requerido
 const ValorationSchema : Schema = new Schema(
@@ -30,7 +31,13 @@ const ValorationSchema : Schema = new Schema(
             type:Schema.Types.ObjectId,
             ref:'Courses',
             required:true
+        },
+        comentario:{
+            type:String,
+            required:false,
+            default: ""
         }
+        
     }
 )
 const Valoration = mongoose.model<ValorationDetailCourseStudend>('ValorationDetailCourseStudend',ValorationSchema);

@@ -2,14 +2,11 @@ import { Request, Response } from "express";
 import Valoration, { ValorationDetailCourseStudend } from "../models/ValorationDetail";
 import CourseExistError, { ErrorCourse } from "../Error/CourseExist";
 import Courses from "../models/Courses";
-import User from "../models/User";
 import { UserErrors } from "../Error/UserErrors";
 import Student from "../models/Student";
 
-class ValorationSystem {
-    // Con este método creamos el promedio de valoración de un curso
-    // Este método no es HTTP, sino que se mantiene entre las clases para aportar
-    // a otros métodos lo que necesiten
+class ValorationSystem {//* implementado
+ 
     static async promedioValoracionCurso(course_id: ValorationDetailCourseStudend["course_id"]): Promise<number | Error> {
         const valoraciones = await Valoration.find({ course_id });
         if (valoraciones.length === 0) throw new CourseExistError(ErrorCourse.COURSE_NOT_FOUND);
@@ -29,6 +26,7 @@ class ValorationSystem {
             if (req.user?.type_user !== "estudiante") {
                 return res.status(401).send("No eres un estudiante, así que no tienes permiso para la valoración");
             }
+          
 
             // Verificar si el alumno ya ha valorado el curso
             const usuario = await Student.findById(req.user?.studentId);
@@ -37,7 +35,8 @@ class ValorationSystem {
             }
 
             if (!usuario.cursos.includes(req.body.cursoId)) {
-                return res.status(400).send("No puedes valorar un curso que no has tomado");
+        
+                return res.status(400).json({message:"No puedes valorar un curso que no has tomado"});
             }
 
             const { valoracion, cursoId } = req.body;
@@ -47,14 +46,15 @@ class ValorationSystem {
             });
 
             if (valorationExist.length > 0) {
-                return res.status(400).send("Ya has valorado este curso, no es posible volverlo a calificar");
+                return res.status(400).json({message:"Ya has valorado este curso, no es posible volverlo a calificar"});
             }
 
             // Crear la nueva valoración
             const valoracionCreate = new Valoration({
                 userId: req.user?.id,
                 valoration: valoracion,
-                course_id: cursoId
+                course_id: cursoId,
+                comentario:req.body.comentario?req.body.comentario:""
             });
 
             await valoracionCreate.save(); // Guardar la valoración
@@ -71,7 +71,7 @@ class ValorationSystem {
             course.valoration = valoracionPromedio as number;
             await course.save();
 
-            res.send("El curso ha sido calificado con éxito");
+            res.status(200).json({msg:"El curso ha sido calificado con éxito",status:'ok'});
         } catch (error) {
             console.log(error);
             res.status(500).send("Error al calificar el curso");
