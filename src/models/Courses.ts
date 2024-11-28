@@ -3,8 +3,6 @@
 import mongoose, { Schema, Document, Types, PopulatedDoc,ObjectId } from 'mongoose';
 import { InstructorInter } from './Instructor';
 import { StudentInter } from './Student';
-import { ValorationDetailCourseStudend } from './ValorationDetail';
-
 
 export interface CoursesInter extends Document {
     //?agregar el campo de precio
@@ -78,6 +76,10 @@ const CoursesSchema: Schema = new Schema({
         type:Boolean,
         required:true,
         default:false//!si no se especifica la valoracion, entonces queda como false
+    },
+    costo:{
+        type:Number,
+        required:true,
     }
 });
 
