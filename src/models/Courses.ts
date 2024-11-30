@@ -80,7 +80,7 @@ const CoursesSchema: Schema = new Schema({
     },
     costo:{
         type:Number,
-        required:true,
+        required:false,
     }
 });
 
