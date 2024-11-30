@@ -2,6 +2,7 @@ import { Router } from "express";
 import AuthController from "../controllers/AuthController";
 import { body } from "express-validator";
 import { handleErrors } from "../middlewares/handleErrores";
+import { autenticate } from "../middlewares/autenticate";
 const routerAuth = Router();
 
 routerAuth.get('/prueba', AuthController.prueba);
@@ -36,6 +37,7 @@ routerAuth.post('/login',
         body('numberCard').isString().notEmpty(),
         body('tittle').isString().notEmpty(),
         handleErrors,
+        autenticate,
         AuthController.loginConfirmPayment);
 
 

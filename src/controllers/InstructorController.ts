@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import Instructor from '../models/Instructor';
 import User from '../models/User';
 import { InstructorInter } from '../models/Instructor';
-import Courses from '../models/Courses';
+import Courses, { CoursesInter } from '../models/Courses';
 import { InstructorUsuario } from '../type/type';
 import { generadorToken } from '../helpers/generadorToken';
-import UnionCode from '../models/UnionCode';
+import UnionCode, { IUnionCode } from '../models/UnionCode';
 import CoursesController from './CursosController';
 class InstructorController {
     
@@ -36,54 +36,53 @@ class InstructorController {
 
       //!como es un metodo de extraccion de datos del instuctor este metodo va a seguir creciondo por el requerimiento de peticiones diferenets
       static async getInstructor(req: Request, res: Response) {
+        const { instructorId } = req.user!;
+        console.log(instructorId);
         try {
-            const idInstructor = req.user?.instructorId;
-            //los que tienen codigo de union los guardare con el nombre, y el codigo de union y el id
-            //los que no tienen, solo el nombre, el tipo y el id
-            let cursosConCodigoUnion: any[] = []
-            console.log("desde getInstructor")
-            //extraccion de todos los grupos de ese instructor
-            if(idInstructor){
-                //estos cursos son todo curso, pero hay que ver, que cursos no tienen codigo de union
-                const instructor = await Instructor.findById(idInstructor).select('_id')
-                console.log(instructor)
-                if (!instructor) return res.status(404).json({ message: 'Instructor no encontrado' });
-                //buscamos los cursos que tengan el id del instructor
-                //si tienn codigo de union, entonces los mandamos, y los que no tienen codigo de union
-                //los ponemos en otro arreglo
-                const cursos = await Courses.find({ instructor_Id: instructor._id });
-                 
-                console.log(cursos.length)
+            if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+            // Verificar si el usuario es un instructor
+            if (req.user.type_user !== 'instructor') return res.status(401).json({ message: 'No autorizado' });
+            if (req.user.instructorId) {
+                const intructorName = await User.findOne({instructorId}).select("name plazoPago")
+                // Llamar al método estático correctamente usando el nombre de la clase
+                const codigos = await InstructorController.getCodigosUnionHook(req.user.instructorId.toString());
+                //mandamos a llamar todos los cursos del instuctor
+                const cursos = await InstructorController.getCoursesInstructor(req.user.instructorId.toString());
 
-
-                const codigos = await UnionCode.find({group: cursos.map(curso => curso._id)})
-                //con codigo
-                for (let i = 0; i < codigos.length; i++) {
-                    
-                    const cursoCodigo = await Courses.findById(codigos[i].group)
-                    cursosConCodigoUnion.push({curso: cursoCodigo, codigo: codigos[i].code})
-                    
-                }   
-                //enviamos tambien los cursos de ese instructor
-                const cursosINstructor = Instructor.findById(idInstructor).populate('courses')
-                //@ts-ignore
-                const {courses} = cursosINstructor
-                   
-                res.status(200).json({
-                    usuario:req.user,
-                    cursosConCodigoUnion,
-                    cursos,
-                    courses
-                   
-                });
-        
+               console.log(codigos)
+               console.log("/*******************")
+               console.log(cursos)
+                return res.json({
+                    instructor: intructorName,
+                    codigos,
+                    cursos
+                })
             }
-            
-            //agregar los grupos que contiene el instructor
-
-          
         } catch (error) {
+            console.log(error);
             res.status(500).json({ message: 'Error al obtener el instructor', error });
+        }
+    }
+
+    // Modularizar el proceso de getInstructor que es para un custom hook en el frontend
+    private static async getCodigosUnionHook(idInstructor: string):Promise<IUnionCode[] | undefined> {
+        try {
+            console.log(idInstructor);
+            const unionCodes = await UnionCode.find({ instructorId: idInstructor });
+            return unionCodes
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    private static async getCoursesInstructor(idInstructor:string):Promise<CoursesInter[]|undefined> {
+        try{
+            const cursosInstructor = await Courses.find({instructor_Id: idInstructor})
+            return cursosInstructor
+
+        }catch(e){
+
+            console.log(e)
         }
     }
 

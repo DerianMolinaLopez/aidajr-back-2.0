@@ -1,7 +1,8 @@
 import mongoose,{Schema, Document, Types, PopulatedDoc} from 'mongoose';
 import { CoursesInter } from './Courses';
+import { UserInter } from './User';
 export interface InstructorInter extends Document{
-    user_Id: Types.ObjectId;
+    user_Id: PopulatedDoc<UserInter&Document>;
     courses: PopulatedDoc<CoursesInter & Document>[];
 }
 const InstructorSchema:Schema = new Schema({

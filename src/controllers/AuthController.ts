@@ -150,6 +150,7 @@ class AuthContoller{
   */
     static async loginConfirmPayment(req: Request, res: Response) {
         try {
+            console.log(req.user)
             const { email, password,tittle } = req.body;
             // Verificar que el email sea válido
             if (!email || !password) {
