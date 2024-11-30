@@ -18,6 +18,7 @@ export interface CoursesInter extends Document {
     valorationDetail : ObjectId[];//hacemos que sea de ese tipo de valoracion o un objectId para usar dichos id
     sections : ObjectId[];
     valorable:boolean;
+    costo:number;
    
 }
 

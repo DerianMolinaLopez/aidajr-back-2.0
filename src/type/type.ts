@@ -1,6 +1,7 @@
 import { CoursesInter } from "../models/Courses";
 import { ObjectId } from "mongoose";
 import { UserInter } from "../models/User";
+import {IUnionCode } from "../models/UnionCode";
 import { SectionsInter } from "../models/Sections";
 export type CourseShort = Pick<CoursesInter, "name" | "description" | "tipoCurso" | "valoration"|"id">;
 export type UserAux = Pick<UserInter, "name" | "email" | "type_user" |"password">;
@@ -47,3 +48,8 @@ export type CursoShort = {
     tipoCurso: string;
     instructor:string;
 };
+export type UnionCodeObj = {
+    _id:IUnionCode["_id"];
+    code: IUnionCode["code"];
+    name:string;
+}

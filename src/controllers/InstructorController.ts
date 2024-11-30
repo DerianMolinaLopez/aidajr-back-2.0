@@ -3,10 +3,11 @@ import Instructor from '../models/Instructor';
 import User from '../models/User';
 import { InstructorInter } from '../models/Instructor';
 import Courses, { CoursesInter } from '../models/Courses';
-import { InstructorUsuario } from '../type/type';
+import { InstructorUsuario, UnionCodeObj } from '../type/type';
 import { generadorToken } from '../helpers/generadorToken';
 import UnionCode, { IUnionCode } from '../models/UnionCode';
 import CoursesController from './CursosController';
+import { union } from 'zod';
 class InstructorController {
     
 
@@ -49,9 +50,9 @@ class InstructorController {
                 //mandamos a llamar todos los cursos del instuctor
                 const cursos = await InstructorController.getCoursesInstructor(req.user.instructorId.toString());
 
-               console.log(codigos)
+            //   console.log(codigos)
                console.log("/*******************")
-               console.log(cursos)
+           //    console.log(cursos)
                 return res.json({
                     instructor: intructorName,
                     codigos,
@@ -65,11 +66,21 @@ class InstructorController {
     }
 
     // Modularizar el proceso de getInstructor que es para un custom hook en el frontend
-    private static async getCodigosUnionHook(idInstructor: string):Promise<IUnionCode[] | undefined> {
+    private static async getCodigosUnionHook(idInstructor: string) {
         try {
-            console.log(idInstructor);
-            const unionCodes = await UnionCode.find({ instructorId: idInstructor });
-            return unionCodes
+            const unionCodes = await UnionCode.find({ instructorId: idInstructor }).populate({ path: 'group', select: 'name' });
+
+            // Extraer el campo `group` de cada objeto
+            const codigosUnion = unionCodes.map(code => ({
+                _id: code._id,
+                instructorId: code.instructorId,
+                code: code.code,
+                group: code.group,
+                __v: code.__v
+            }));
+
+            console.log(codigosUnion);
+            return codigosUnion;
         } catch (e) {
             console.log(e);
         }

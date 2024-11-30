@@ -1,8 +1,9 @@
-import mongoose, { Schema, Document, ObjectId } from 'mongoose';
+import mongoose, { Schema, Document, ObjectId, PopulatedDoc } from 'mongoose';
+import { CoursesInter } from './Courses';
 
 export interface IUnionCode extends Document {
     code: string;
-    group: ObjectId;
+    group: ObjectId | PopulatedDoc< CoursesInter>;
     instructorId: ObjectId;
 }
 
@@ -21,7 +22,8 @@ const UnionCodeSchema: Schema = new Schema({
     group: {
         type: Schema.Types.ObjectId,
         required: true,
-        trim: true
+        trim: true,
+        ref:'Courses'
     },
 });
 
