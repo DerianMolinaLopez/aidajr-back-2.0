@@ -3,7 +3,7 @@ import { CoursesInter } from './Courses';
 import { UserInter } from './User';
 import Section, { SectionsInter } from './Sections';
 
-interface HomeworkInter extends Document{
+export interface HomeworkInter extends Document{
     title:string,
     description:string,
     course:Types.ObjectId | PopulatedDoc<CoursesInter & Document>
