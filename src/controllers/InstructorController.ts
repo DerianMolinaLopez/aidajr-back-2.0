@@ -97,6 +97,18 @@ class InstructorController {
         }
     }
 
+    //metodo para traer las tareas de los cursos de un instructor
+    private static async getHomeworkInstructor(idInstructor:string):Promise<CoursesInter[]|undefined> {
+        try{
+            const cursosInstructor = await Courses.find({instructor_Id: idInstructor})
+            return cursosInstructor
+
+        }catch(e){
+
+            console.log(e)
+        }
+    }
+
 /*
 
 for (let curso of cursos) {

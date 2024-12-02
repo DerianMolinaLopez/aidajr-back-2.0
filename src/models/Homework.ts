@@ -2,6 +2,7 @@ import mongoose,{Schema, Document, Types, PopulatedDoc} from 'mongoose';
 import { CoursesInter } from './Courses';
 import { UserInter } from './User';
 import Section, { SectionsInter } from './Sections';
+import Instructor from './Instructor';
 
 export interface HomeworkInter extends Document{
     title:string,
@@ -10,6 +11,8 @@ export interface HomeworkInter extends Document{
     beginDate:Date,
     endDate:Date,   
     Section:Types.ObjectId | PopulatedDoc<SectionsInter & Document>
+    revisado:boolean,
+    instructor:Types.ObjectId | PopulatedDoc<UserInter & Document>
 }
 
 const HomeworkSchema:Schema= new Schema({
@@ -41,6 +44,14 @@ const HomeworkSchema:Schema= new Schema({
         type:Schema.Types.ObjectId,
         ref:'Section',
         required:true
+    },
+    revisado:{
+        type:Boolean,
+        default:false
+    },
+    Instructor:{
+        type:Schema.Types.ObjectId,
+        ref:'User',
     }
 })
 const  Homework = mongoose.model<HomeworkInter>('Homework', HomeworkSchema);
