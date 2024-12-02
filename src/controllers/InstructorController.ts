@@ -8,6 +8,7 @@ import { generadorToken } from '../helpers/generadorToken';
 import UnionCode, { IUnionCode } from '../models/UnionCode';
 import CoursesController from './CursosController';
 import { union } from 'zod';
+import Homework from '../models/Homework';
 class InstructorController {
     
 
@@ -52,11 +53,15 @@ class InstructorController {
 
             //   console.log(codigos)
                console.log("/*******************")
+               console.log(req.user)
+               console.log(req.user.instructorId.toString())
+              const  tareas =await InstructorController.getHomeworkInstructor(req.user.instructorId.toString())
            //    console.log(cursos)
+           
                 return res.json({
                     instructor: intructorName,
                     codigos,
-                    cursos
+                    cursos,tareas
                 })
             }
         } catch (error) {
@@ -97,11 +102,15 @@ class InstructorController {
         }
     }
 
+
     //metodo para traer las tareas de los cursos de un instructor
-    private static async getHomeworkInstructor(idInstructor:string):Promise<CoursesInter[]|undefined> {
+    private static async getHomeworkInstructor(idInstructor:string) {
         try{
-            const cursosInstructor = await Courses.find({instructor_Id: idInstructor})
-            return cursosInstructor
+          //  console.log("desde gethomework" + idInstructor)
+            const tareasInstructor= await Homework.find({Instructor:idInstructor}).populate({path:'course',select:'name tipoCurso'})//!ERROR AQUI
+            
+            console.log(tareasInstructor)
+            return tareasInstructor
 
         }catch(e){
 

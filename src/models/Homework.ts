@@ -12,7 +12,7 @@ export interface HomeworkInter extends Document{
     endDate:Date,   
     Section:Types.ObjectId | PopulatedDoc<SectionsInter & Document>
     revisado:boolean,
-    instructor:Types.ObjectId | PopulatedDoc<UserInter & Document>
+    Instructor:Types.ObjectId | PopulatedDoc<UserInter & Document>
 }
 
 const HomeworkSchema:Schema= new Schema({
