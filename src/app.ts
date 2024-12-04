@@ -11,6 +11,7 @@ import routerInstructor from './routes/instructorRoute';
 import routerSection from './routes/sectionRoute';
 import routerValoracion from './routes/valoracionRoute';
 import routerHomework from './routes/HomehorkRoutes';
+import routerPeriodos from './routes/periodosRoute';
 // initializations
     const app = Express();
     dotenv.config();
@@ -45,5 +46,8 @@ import routerHomework from './routes/HomehorkRoutes';
     app.use("/api/valoration",routerValoracion)
     //tareas
     app.use("/api/homework",routerHomework)
+    //pagos de periodos
+    app.use("/api/periodos",routerPeriodos)
+
 
     export default app;

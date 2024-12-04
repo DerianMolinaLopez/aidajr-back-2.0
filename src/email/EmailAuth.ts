@@ -67,7 +67,6 @@ class EmailAuth{
                     ahora tiene acceso a los beneficios de su paquete comprado <br />
                     si tiene dudas sobre nuestras politicas de cancelacion  de devolucion, le recomendamos leer los terminos y condiciones
                 </p>
-                <p style="color: #333; font-weight: bold;">El cargo se realizo a la tarjeta con el numero: <span style="color: #007bff;">${compra.numberCard}</span>.</p>
                 <p style="color: #333; font-weight: bold;">Has comprado el periodo <span style="color: #007bff;">${compra.tittle}</span>.</p>
                 <p style="color: #333;">Con un costo de <strong style="color: #e74c3c;">$${compra.price} MXN</strong>.</p>
 

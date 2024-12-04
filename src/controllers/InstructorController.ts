@@ -118,18 +118,6 @@ class InstructorController {
         }
     }
 
-/*
-
-for (let curso of cursos) {
-                    if (cursosConCodigoUnionIds.includes(curso._id.toString())) {
-                        const codigoUnion = codigos.find(codigo => codigo.group.toString() === curso._id.toString());
-                        cursosConCodigoUnion.push({ curso, codigo: codigoUnion?.code });
-                    } else {
-                        cursosSinCodigoUnion.push({ curso, tipo: 'sin codigo de union' });
-                    }
-                }
-    
-*/
 
 
 
