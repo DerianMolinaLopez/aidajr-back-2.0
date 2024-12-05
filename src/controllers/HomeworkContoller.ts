@@ -1,6 +1,6 @@
 import Courses from "../models/Courses";
 import Section from "../models/Sections";
-import Homework from "../models/Homework";
+import Homework, { HomeworkInter } from "../models/Homework";
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 
@@ -44,6 +44,24 @@ class HomeworkController {
             console.log(error);
             return res.status(500).json({ message: "Error al crear la tarea" });
         }
+    }
+    static async getHomeworkByStudent(req: Request, res: Response) {
+       //traemos las tareas segun el id del curso, pero vamos a recibir un array de id
+       try{
+        const {cursos}=req.body
+        const tareasArray:HomeworkInter[] =[]
+        if(cursos.length===0)res.status(200).json({message:"No hay tareas asignadas"})
+        //buscamos cada una de las tareas segun el id del curso
+              for(let i = 0; i < cursos.length; i++){
+                    const tareas = await Homework.find({course:cursos[i]})
+                    tareasArray.push(...tareas)
+              }
+        res.status(200).json({tareas:tareasArray})
+       }catch(e){
+              console.log(e)
+              return res.status(500).json({message:"Error al traer las tareas"})
+       }
+
     }
 }
 

@@ -11,4 +11,5 @@ routerHomework.post('/createHomework',
        politicasCrearTareas,
        handleErrors,
        HomeworkController.createHomework)
+routerHomework.post('/getHomeworkByStudent',HomeworkController.getHomeworkByStudent)
 export default routerHomework

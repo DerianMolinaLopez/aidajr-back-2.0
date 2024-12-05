@@ -48,12 +48,12 @@ class PeriodoController{
             const userExist = await User.findOne({email})
             
             if(!userExist) return res.status(400).json({message:"Usuario no existe"})
-             if(userExist.type_user!=="instructor") return res.status(400).json({message:"Tu usuario no es de un instructorm asi que tu pago no procedio"})
+             if(userExist.type_user!=="instructor") return res.status(400).json({message:"Tu usuario no es de un instructor asi que tu pago no procedio"})
                 if(!bcrypt.compareSync(password,userExist.password)) return res.status(400).json({message:"Contraseña incorrecta"})
                 //SI TODO ESTA BIEN SOLO DEBEMOS IDENTIFICAR EL PERIODO
             const periodoExist = await Periodo.findById(periodo)
             if(!periodoExist) return res.status(400).json({message:"Periodo no existe"})    
-    
+            if(userExist.plazoPago!=='' && userExist.plazoPago!=undefined && userExist.plazoPago!=undefined) return res.status(400).json({message:"Ya tienes un periodo de pago activo, si quieres cambiar tu plan contactanos"})
             userExist.plazoPago = periodoExist.name//asignamos el periodo al usuario
               //mandamos la factura
               await EmailAuth.facturaCompraPeriodos(
