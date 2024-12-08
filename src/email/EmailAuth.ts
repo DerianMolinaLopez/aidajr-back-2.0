@@ -70,7 +70,7 @@ class EmailAuth{
                 <p style="color: #333; font-weight: bold;">Has comprado el periodo <span style="color: #007bff;">${compra.tittle}</span>.</p>
                 <p style="color: #333;">Con un costo de <strong style="color: #e74c3c;">$${compra.price} MXN</strong>.</p>
 
-                <p>Para proteger la integridad de nuestros clientes, su numero de seguridad como su numerode cuenta
+                <p>Para proteger la integridad de nuestros clientes, su numero de seguridad y su numero de cuenta
                     no se guardaran en nuestro sistema, por lo que le recomendamos guardar esta informacion en un lugar seguro
                     y guardar el recibo de compra, de lo contrario no seria posible una devolucion o reclamacion en un futuro pronto.
                 </p>

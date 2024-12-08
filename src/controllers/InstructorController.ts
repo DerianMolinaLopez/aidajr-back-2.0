@@ -298,6 +298,7 @@ __v
             res.status(500).json({ message: 'Error al crear el grupo', error });
         }
     }
+    
 
 
 }

@@ -1,26 +1,41 @@
 import { Request, Response } from 'express';
 import Courses from '../models/Courses';
 import Instructor from '../models/Instructor';
+import Periodo, { Periodoenum } from '../models/Periodos';
 
 class CoursesController {
     // Crear un nuevo curso
     static async createCourse(req: Request, res: Response) {
         try {
             //!es necesario guardar el id del instructor que crea el grupo
-            
+            // TODO como nueva funcionalidad, agregare la verificacion del limite del plazo
+            // todo asi que hay que identificar el plazo que tiene ese instrcutor
+
+            //?extraccion del curso
+            let plazopago = req.user?.plazoPago;
+      
+            const periodo = await Periodo.findOne({name: plazopago})
+            //una vez teniendo el periodo comparamos con cuantos cursos tiene el instructor
+            const cursos = await Courses.find({instructor_Id: req.user?.instructorId})
+            if(!periodo) return res.status(400).json({message: 'No se encontro el periodo de pago'})
+            if(cursos.length > periodo?.gruposMaximos){
+                return res.status(400).json({message: 'Has llegado al limite de cursos que puedes tener'})
+            }
+    
             const {name} = req.body;
-            console.log(name)
+      
         
              const courseExist = await Courses.findOne({name})
              if(courseExist) return res.status(400).send("Ya hay un curso con ese nombre")
             const course = new Courses(req.body);
             console.log("*********************************")
             
-             console.log(req.user?.instructorId)
+
              course.instructor_Id = req.user?.instructorId;
-             console.log(course)
+             course.valorable = false;
+
             await course.save();
-            res.status(201).send("Curso creado con exito")
+            res.status(201).json({message: 'Curso creado con éxito'});
         } catch (error) {
             console.log(error)
             res.status(400).json({ message: 'Error al crear el curso', error });
