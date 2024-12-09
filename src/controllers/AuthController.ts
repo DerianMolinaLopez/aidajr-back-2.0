@@ -44,6 +44,7 @@ class AuthContoller{
             } else if (type_user === 'instructor') {
                 const instructor = await Instructor.create({ user_Id: user._id });
                 user.instructorId = instructor._id as any  // Asignamos el id del instructor al usuario
+                user.plazoPago = "";
             }
 
             // Guardamos el usuario

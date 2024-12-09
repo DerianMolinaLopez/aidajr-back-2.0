@@ -22,7 +22,7 @@ export class Usercontroller{
     //!este queda pendiente
     static async getCoursesByStudent(req:Request,res:Response){
       try{
-        console.log(req.user)
+       // console.log(req.user)
         const student = req.user?.studentId
         const studentExist = await Student.findById(student)
         let cursos:CourseShort[] = []
@@ -40,7 +40,7 @@ export class Usercontroller{
                                                         options:{limit:3}
                                                       })
                                                    
-            console.log(cursoExist?.course)
+          //  console.log(cursoExist?.course)
             if(cursoExist?.course){
              cursos.push(cursoExist.course as CourseShort)
             }
@@ -50,7 +50,7 @@ export class Usercontroller{
         }
        res.send({cursos:cursos})
       }catch(err){
-        console.log(err)
+      //  console.log(err)
         res.send("Error en el servidor")
       }
     }
@@ -114,10 +114,10 @@ export class Usercontroller{
     static async getCoursesByType(req:Request,res:Response){
       try{
         const {tipoCurso} = req.params
-        console.log(req.user)
+      //  console.log(req.user)
         const student = await Student.findById(req.user?.studentId)
        
-        console.log(tipoCurso)
+      //  console.log(tipoCurso)
         if(tipoCurso==='word'|| tipoCurso==='excel'||tipoCurso==='power'){
           const cursos = await Courses.find({ tipoCurso }).select("-course_students")
           .populate({
@@ -137,7 +137,7 @@ export class Usercontroller{
               return curso
             }
            })
-            console.log(cursosFiltrados)
+        //    console.log(cursosFiltrados)
            return res.send({cursos:cursosFiltrados})
         }
         

@@ -1,6 +1,7 @@
 import mongoose,{Schema, Document, Types, PopulatedDoc} from 'mongoose';
 import { InstructorInter } from './Instructor';
 export enum Periodoenum{
+    MENSUAL ="mensual",
     BIMESTRAL = "bimestral",
     TRIMESTRAL = "trimestral",
     SEMESTRAL = "semestral",
