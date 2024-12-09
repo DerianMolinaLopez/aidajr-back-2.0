@@ -6,9 +6,12 @@ import Courses, { CoursesInter } from '../models/Courses';
 import { InstructorUsuario, UnionCodeObj } from '../type/type';
 import { generadorToken } from '../helpers/generadorToken';
 import UnionCode, { IUnionCode } from '../models/UnionCode';
+import { IntegranteSchema,Integrante } from '../type/type';
 import CoursesController from './CursosController';
 import { union } from 'zod';
 import Homework from '../models/Homework';
+import Student from '../models/Student';
+import mongoose from 'mongoose';
 class InstructorController {
     
 
@@ -293,6 +296,41 @@ __v
                 res.json(instructor?.courses);
             }
             res.json({message: "No hay cursos"});
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: 'Error al crear el grupo', error });
+        }
+    }
+    static async getIntegrantesCurso(req: Request, res: Response) {
+
+        try {
+          //solo hay que recibir el id del curso del qeu queremos ver los integrantes
+        //buscamos en cada alumno i en su arreglo de cursos existe ese curso
+        //si esta el alumno lo agregamos a un array de alumnos
+        const integrantesArray: Integrante[] = [];
+        const{idCurso} = req.params
+        console.log(idCurso)
+        const integrantes = await Student.find()//obtenemos todos los registros
+        const alumnos = integrantes.filter(estudiante => estudiante.cursos.includes(new mongoose.Types.ObjectId(idCurso)))//filtramos los alumnos con los que contengan dicho curso
+        for(let i =0; i<alumnos.length; i++){
+              const alumnoConvertido = await User.findById(alumnos[i].user_Id)//buscamos el id del usuairo
+              //copnvertimos los datos
+              if(alumnoConvertido){
+               const id = alumnoConvertido._id
+               const integrante: Integrante = {
+                    _id: id as string,
+                    name: alumnoConvertido?.name,
+                    email: alumnoConvertido?.email
+              }
+              integrantesArray.push(integrante)
+              }
+              
+        }
+        console.log(integrantesArray)
+        res.send({
+           integrantes:integrantesArray
+        })
+
         } catch (error) {
             console.log(error);
             res.status(500).json({ message: 'Error al crear el grupo', error });

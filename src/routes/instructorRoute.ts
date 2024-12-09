@@ -34,6 +34,8 @@ routerInstructor.post('/instructor/crear-grupo', autenticate,
                                                    InstructorController.crearGrupo);//crear grupos
 routerInstructor.post('/instructors/unionCode/:groupId', autenticate, InstructorController.unionCode);
 routerInstructor.get('/instructor/getCourses', autenticate, InstructorController.obtenerCursosInstructor);
+
+routerInstructor.get("/instructor/getIntegrantes/:idCurso",autenticate,InstructorController.getIntegrantesCurso);
  
 
 export default routerInstructor;

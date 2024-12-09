@@ -1,6 +1,7 @@
 import { CoursesInter } from "../models/Courses";
 import { ObjectId } from "mongoose";
 import { UserInter } from "../models/User";
+import z from "zod";
 import {IUnionCode } from "../models/UnionCode";
 import { SectionsInter } from "../models/Sections";
 export type CourseShort = Pick<CoursesInter, "name" | "description" | "tipoCurso" | "valoration"|"id">;
@@ -53,3 +54,10 @@ export type UnionCodeObj = {
     code: IUnionCode["code"];
     name:string;
 }
+export const IntegranteSchema = z.object({
+    _id: z.string(),
+    name: z.string(),
+    email: z.string(),
+}
+)
+export type Integrante = z.infer<typeof IntegranteSchema>;
